@@ -4,6 +4,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Province, Region, RegionType } from '../../dto/Map';
 import { WindowService } from '../../services/window.service';
 import type { Polygon } from 'geojson';
+import _ from 'lodash';
 
 @Component({
   selector: 'app-world',
@@ -93,17 +94,23 @@ export class WorldComponent implements OnInit {
   onWheel(event: WheelEvent) {
     event.preventDefault();
 
+    const svg = event.currentTarget as SVGSVGElement;
+    const ctm = svg.getScreenCTM();
+    if (_.isNil(ctm)) {
+      return;
+    }
+
     const zoomFactor = 1.1;
     const scale = event.deltaY > 0 ? zoomFactor : 1 / zoomFactor;
 
-    const mx = event.offsetX / 800; // mouse X (0–1)
-    const my = event.offsetY / 600;
+    // punkt mapy pod kursorem, we współrzędnych viewBoxa
+    const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(ctm.inverse());
 
+    // ten punkt ma zostać pod kursorem po zmianie skali
+    this.viewBox.x = p.x - (p.x - this.viewBox.x) * scale;
+    this.viewBox.y = p.y - (p.y - this.viewBox.y) * scale;
     this.viewBox.w *= scale;
     this.viewBox.h *= scale;
-
-    this.viewBox.x += this.viewBox.w * (mx * (1 - scale));
-    this.viewBox.y += this.viewBox.h * (my * (1 - scale));
   }
 
   isPanning = false;
@@ -119,14 +126,18 @@ export class WorldComponent implements OnInit {
   onPan(e: MouseEvent) {
     if (!this.isPanning) return;
 
+    const svg = e.currentTarget as SVGSVGElement;
+    const ctm = svg.getScreenCTM();
+    if (_.isNil(ctm)) {
+      return;
+    }
+
     const dx = e.clientX - this.lastX;
     const dy = e.clientY - this.lastY;
 
-    const scaleX = this.viewBox.w / 800;
-    const scaleY = this.viewBox.h / 600;
-
-    this.viewBox.x -= dx * scaleX;
-    this.viewBox.y -= dy * scaleY;
+    // ctm to liczba pikseli ekranu na jednostkę mapy
+    this.viewBox.x -= dx / ctm.a;
+    this.viewBox.y -= dy / ctm.d;
 
     this.lastX = e.clientX;
     this.lastY = e.clientY;
