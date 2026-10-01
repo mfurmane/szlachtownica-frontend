@@ -1,0 +1,13 @@
+.layout {
+  display: flex;
+}
+
+.sidebar {
+  width: 300px;
+  resize: horizontal;
+  overflow: auto;
+}
+
+.main {
+  flex: 1;
+}

@@ -1,0 +1,20 @@
+<h2>Podgląd</h2>
+
+<h3>Prowincja: {{ province ? province : "" }}</h3>
+
+<div>
+    Region: {{ region?.id }}<br>
+    Typ regionu: {{ region ? regionTypeLabels[region.type] : "" }}<br>
+    Kształt terenu: {{ region ? terrainShapeLabels[region.terrainShape] : "" }}<br>
+    Klimat: {{ region ? climateLabels[region.climate] : "" }}<br>
+    Wilgotność: {{ region ? humidityLabels[region.humidity] : "" }}<br>
+    Gleba: {{  region ? soilLabels[region.soilType] : "" }}<br>
+    Magiczny wpływ: {{  region ? enchantLabels[region.enchant] : "" }}<br>
+    Siła magicznego wpływu: {{ region?.enchantmentLevel }}<br>
+</div>
+<!-- <p>Region: {{ region?.type }}</p>
+<p>Region: {{ region?.type }}</p>
+<p>Region: {{ region?.type }}</p>
+<p>Region: {{ region?.type }}</p>
+<p>Region: {{ region?.type }}</p>
+<p>Region: {{ region?.type }}</p> -->
