@@ -8,7 +8,7 @@ Frontend w Angularze 17 do projektu [Szlachtownica](https://github.com/mfurmane/
 - Mapę można przybliżać kółkiem myszy i przesuwać przeciąganiem.
 - Po kliknięciu regionu panel boczny pokazuje jego szczegóły: typ, ukształtowanie terenu, klimat, wilgotność, glebę i wpływ magii.
 
-![Mapa regionów: przełączanie trybów legendy, parametry regionu pod kursorem i podświetlanie kategorii z legendy](docs/demo.gif)
+![Mapa regionów: przełączanie trybów legendy, szczegóły klikniętego regionu i podświetlanie wybranej kategorii](docs/demo.gif)
 
 Stan między mapą a panelem jest współdzielony przez serwis oparty na `BehaviorSubject`.
 
