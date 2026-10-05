@@ -2,7 +2,6 @@
   width="100%"
   height="90%"
   [attr.viewBox]="viewBox.x + ' ' + viewBox.y + ' ' + viewBox.w + ' ' + viewBox.h"
-  style="border:1px solid black;"
     (wheel)="onWheel($event)"
   (mousedown)="startPan($event)"
   (mousemove)="onPan($event)"
@@ -15,7 +14,7 @@
         <ng-container *ngFor="let region of subprovince.regions">
           <path
             [attr.d]="toPath(region.area)"
-            [attr.fill]="regionTypeColors[region.type]"
+            [attr.fill]="getColor(region)"
             stroke="black"
             vector-effect="non-scaling-stroke"
             stroke-width="1.4"

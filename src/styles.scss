@@ -1,1 +1,50 @@
-/* You can add global styles to this file, and also import other style files */
+/* Globalne: zmienne, reset i typografia. Układ poszczególnych części jest w plikach .scss komponentów. */
+
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --border: #dcdad3;
+  --text: #1d1c1a;
+  --muted: #6b6963;
+  --accent: #7a1f2b;
+  --accent-soft: #f0d9dd;
+  --radius: 6px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text);
+  background: var(--bg);
+}
+
+h1, h2, h3 {
+  margin: 0;
+}
+
+h2 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+button {
+  font: inherit;
+}

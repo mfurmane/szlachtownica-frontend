@@ -1,13 +1,40 @@
+// Aplikacja zajmuje dokładnie wysokość okna; przewija się panel boczny, nie strona
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+h1 {
+  padding: 10px 16px;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
 .layout {
+  flex: 1;
+  min-height: 0;
   display: flex;
 }
 
 .sidebar {
-  width: 300px;
+  width: 320px;
+  min-width: 260px;
+  max-width: 50vw;
+  flex-shrink: 0;
+  overflow-y: auto;
+  // miejsce na pasek przewijania jest zarezerwowane, więc zawartość nie skacze, kiedy się pojawia
+  scrollbar-gutter: stable;
   resize: horizontal;
-  overflow: auto;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
 }
 
 .main {
   flex: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: 12px;
 }

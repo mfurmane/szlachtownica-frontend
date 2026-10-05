@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+// CSS ma pierwszeństwo przed atrybutami width/height z szablonu
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: grab;
+}
+
+svg:active {
+  cursor: grabbing;
+}
+
+path:hover {
+  filter: brightness(1.2);
+}

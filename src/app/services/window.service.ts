@@ -9,15 +9,14 @@ export class WindowService {
 
   constructor() { }
 
-  private provinceSubject = new BehaviorSubject<Province | null>(null);
+  private provinceSubject = new BehaviorSubject<Province | undefined>(undefined);
   province$ = this.provinceSubject.asObservable();
 
-  private subProvinceSubject = new BehaviorSubject<SubProvince | null>(null);
+  private subProvinceSubject = new BehaviorSubject<SubProvince | undefined>(undefined);
   subProvince$ = this.subProvinceSubject.asObservable();
 
-  private regionSubject = new BehaviorSubject<Region | null>(null);
+  private regionSubject = new BehaviorSubject<Region | undefined>(undefined);
   region$ = this.regionSubject.asObservable();
-
 
   setProvince(province: Province) {
     this.provinceSubject.next(province);

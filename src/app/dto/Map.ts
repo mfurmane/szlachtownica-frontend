@@ -39,6 +39,15 @@ export interface Region {
   // coast: boolean;
 }
 
+export enum Characteristic {
+  REGION_TYPE = 'REGION_TYPE',
+  TERRAIN_SHAPE = 'TERRAIN_SHAPE',
+  HUMIDITY = 'HUMIDITY',
+  CLIMATE = 'CLIMATE',
+  SOIL = 'SOIL',
+  ENCHANT = 'ENCHANT'
+}
+
 export enum RegionType {
   FOREST = 'FOREST',
   SWAMP = 'SWAMP',

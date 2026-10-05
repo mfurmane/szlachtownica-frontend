@@ -1,0 +1,82 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.modes button {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.modes button:hover {
+  border-color: var(--accent);
+}
+
+// Zadziała, kiedy przyciski dostaną [class.active]
+.modes button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.highlight-info {
+  margin: 0;
+  color: var(--muted);
+}
+
+// Dwie kolumny przy domyślnej szerokości panelu, więcej przy poszerzonym
+.legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 2px 8px;
+}
+
+// Wygląda tak samo na <div> i na <button>, więc zmiana znacznika nie zepsuje stylu
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 3px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.legend-row:hover {
+  background: var(--bg);
+}
+
+// Aktywny musi wyraźnie różnić się od najechanego. Tylko rzeczy, które nie zmieniają rozmiaru wiersza
+// (tło, cień, kolor), żeby zaznaczenie nie łamało etykiety do drugiej linii.
+.legend-row.active {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+  color: var(--accent);
+}
+
+.swatch {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 2px;
+}

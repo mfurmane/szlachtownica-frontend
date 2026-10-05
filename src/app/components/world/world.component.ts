@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
-import { Province, Region, RegionType } from '../../dto/Map';
+import { Characteristic, Province, Region } from '../../dto/Map';
 import { WindowService } from '../../services/window.service';
 import type { Polygon } from 'geojson';
 import _ from 'lodash';
+import { ColoringStrategyService } from '../../services/coloring-strategy.service';
+import { LegendRow, LEGENDS } from '../../shared/legend';
 
 @Component({
   selector: 'app-world',
@@ -18,36 +20,38 @@ export class WorldComponent implements OnInit {
   provinces: Province[] = [];
   viewBox = { x: 0, y: 0, w: 100, h: 100 };
   window: WindowService = inject(WindowService);
-  colors: string[] = ["#000000", "#ff6f00", "#ffff00", "#00ddff", "#006eff", "#bf58ff", "#ff85fb", "#ff003c", "#6be075", "#3c5d9a", "#974b00", "#b6ac1e", "#03a8ae", "#00570d"];
-
-    regionTypeColors: Record<RegionType, string> = {
-      [RegionType.ABANDONED_REACH]: '#000000',
-      [RegionType.CRAFTS_LAND]: '#993800',
-      [RegionType.DUST_PLAIN]: '#e3e2b9',
-      [RegionType.ESTATE_REGION]: '#880000',
-      [RegionType.FARMING_LAND]: '#fffb00',
-      [RegionType.FOREST]: '#197f00',
-      [RegionType.IRON_MARCHES]: '#2a2a2a',
-      [RegionType.MEADOWS]: '#00ff37',
-      [RegionType.PINE_CRAG]: '#61ffc8',
-      [RegionType.ROCK_LAND]: '#a1a1a1',
-      [RegionType.SETTLERS_REACH]: '#ff871e',
-      [RegionType.SUPERNATURAL_EXPANSE]: '#ff00d9',
-      [RegionType.SWAMP]: '#1b2e00',
-      [RegionType.TOURISTIC_LAND]: '#606eff'
-    };
+  coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
+  readonly highlightedColor: string = '#ffff00';
+  readonly unhighlightedColor: string = '#292918';
 
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.http.get<Province[]>('http://localhost:8080/world/provinces/all')
       .subscribe((data: Province[]) => {
-        this.window.setProvince(data[0]);
-        this.window.setSubProvince(data[0].subProvinces[0]);
-        this.window.setRegion(data[0].subProvinces[0].regions[0]);
         this.provinces = data;
         this.setInitialViewBox();
       });
+    this.coloringStrategyService.currentColoring$.subscribe((currentColoring: Characteristic) => {
+      this.currentColoring = currentColoring;
+    })
+    this.coloringStrategyService.highlightedCategory$.subscribe((highlighted: LegendRow | undefined) => {
+      this.highlighted = highlighted;
+    })
+  }
+
+  highlighted?: LegendRow;
+  currentColoring: Characteristic = Characteristic.REGION_TYPE;
+
+  getColor(region: Region): string {
+    if (!_.isNil(this.highlighted)) {
+      if (this.highlighted.matches(region)) {
+        return this.highlightedColor;
+      } else {
+        return this.unhighlightedColor;
+      }
+    }
+    return LEGENDS[this.currentColoring].colorPicker(region);
   }
 
   onRegionClick(region: Region, province: Province) {

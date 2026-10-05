@@ -1,0 +1,18 @@
+<h2>Legenda</h2>
+
+<div class="modes">
+  @for (coloring of availableColorings; track coloring) {
+    <button [class.active]="coloring === currentColoring" (click)="setStrategy(coloring)">
+        {{ characteristicLabels[coloring] }}
+    </button>
+  }
+</div>
+
+<div class="legend">
+@for (row of getLegend().rows; track row.value) {
+    <button class="legend-row" [class.active]="row === highlighted" (click)="highlightCategory(row)" [attr.title]="row === highlighted ? 'Kliknij ponownie, aby wyłączyć' : undefined">
+        <span class="swatch" [style.background-color]="row.color"></span>
+        {{ row.label }}
+    </button>
+}
+</div>
