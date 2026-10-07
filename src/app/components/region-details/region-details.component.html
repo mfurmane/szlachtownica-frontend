@@ -1,8 +1,8 @@
 <dl class="details">
-  <dt>Region</dt><dd>{{ region.id }}</dd>
-  @for (value of values; track value.characteristic) {
+  <dt>Region</dt><dd>{{ region().id }}</dd>
+  @for (value of values(); track value.characteristic) {
     <dt>{{ characteristicLabels[value.characteristic] }}</dt>
     <dd><button (click)="characteristicSelected.emit(value)">{{ value.row.label }}</button></dd>
   }
-  <dt>Siła magicznego wpływu</dt><dd>{{ region.enchantmentLevel }}</dd>
+  <dt>Siła magicznego wpływu</dt><dd>{{ region().enchantmentLevel }}</dd>
 </dl>

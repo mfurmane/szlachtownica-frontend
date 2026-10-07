@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
 import { Characteristic, Region } from '../../dto/Map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
 
@@ -9,20 +9,14 @@ import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicS
   templateUrl: './region-details.component.html',
   styleUrl: './region-details.component.scss'
 })
-export class RegionDetailsComponent implements OnChanges {
-  @Input({ required: true }) region!: Region;
-  @Output() characteristicSelected: EventEmitter<CharacteristicSelection> = new EventEmitter<CharacteristicSelection>();
+export class RegionDetailsComponent {
 
-  values: Array<CharacteristicSelection> = [];
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['region']) {
-      this.values = Object.values(Characteristic)
-      .map((characteristic: Characteristic) => 
-        regionAsCharacteristicSelection(characteristic, this.region)
-      );
-    }
-  }
+  region: InputSignal<Region> = input.required<Region>();
+  values: Signal<Array<CharacteristicSelection>> = computed((): Array<CharacteristicSelection> =>
+    Object.values(Characteristic).map((characteristic: Characteristic) =>
+      regionAsCharacteristicSelection(characteristic, this.region())
+    ));
+  characteristicSelected: OutputEmitterRef<CharacteristicSelection> = output<CharacteristicSelection>();
 
   characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
 
