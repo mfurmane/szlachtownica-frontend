@@ -12,7 +12,7 @@ import { CHARACTERISTIC_LABELS, LegendCategory, LegendRow, LEGENDS } from '../..
 })
 export class ColoringStrategyComponent implements OnInit {
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.coloringStrategyService.currentColoring$.subscribe((currentColoring: Characteristic) => {
       this.currentColoring = currentColoring;
     });
@@ -27,14 +27,7 @@ export class ColoringStrategyComponent implements OnInit {
 
   highlighted?: LegendRow;
 
-  availableColorings: Array<Characteristic> = [
-    Characteristic.REGION_TYPE, 
-    Characteristic.CLIMATE, 
-    Characteristic.HUMIDITY, 
-    Characteristic.TERRAIN_SHAPE, 
-    Characteristic.SOIL, 
-    Characteristic.ENCHANT
-  ]
+  availableColorings: Array<Characteristic> = Object.values(Characteristic);
 
   characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
 
@@ -42,11 +35,11 @@ export class ColoringStrategyComponent implements OnInit {
     return LEGENDS[this.currentColoring];
   }
 
-  setStrategy(characteristic: Characteristic) {
+  setStrategy(characteristic: Characteristic): void {
     this.coloringStrategyService.setCurrentColoring(characteristic);
   }
 
-  highlightCategory(row: LegendRow) {
+  highlightCategory(row: LegendRow): void {
     this.coloringStrategyService.highlightCategory(row);
   }
 

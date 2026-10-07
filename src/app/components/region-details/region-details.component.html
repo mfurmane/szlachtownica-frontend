@@ -1,10 +1,8 @@
 <dl class="details">
   <dt>Region</dt><dd>{{ region.id }}</dd>
-  <dt>Typ regionu</dt><dd>{{ regionTypeLabels[region.type] }}</dd>
-  <dt>Kształt terenu</dt><dd>{{ terrainShapeLabels[region.terrainShape] }}</dd>
-  <dt>Klimat</dt><dd>{{ climateLabels[region.climate] }}</dd>
-  <dt>Wilgotność</dt><dd>{{ humidityLabels[region.humidity] }}</dd>
-  <dt>Gleba</dt><dd>{{ soilLabels[region.soilType] }}</dd>
-  <dt>Magiczny wpływ</dt><dd>{{ enchantLabels[region.enchant] }}</dd>
+  @for (value of values; track value.characteristic) {
+    <dt>{{ characteristicLabels[value.characteristic] }}</dt>
+    <dd><button (click)="characteristicSelected.emit(value)">{{ value.row.label }}</button></dd>
+  }
   <dt>Siła magicznego wpływu</dt><dd>{{ region.enchantmentLevel }}</dd>
 </dl>

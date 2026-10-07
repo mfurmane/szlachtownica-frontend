@@ -2,7 +2,7 @@
 
 @if (region && province) {
 <h3>Prowincja: {{ province }}</h3>
-<app-region-details [region]="region" />
+<app-region-details [region]="region" (characteristicSelected)="onCharacteristicSelected($event)"/>
 }
 @else {
     <h3>Wybierz region</h3>

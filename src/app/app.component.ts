@@ -10,5 +10,5 @@ import { WindowComponent } from './components/window/window.component';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'szlachtownica-frontend';
+  
 }

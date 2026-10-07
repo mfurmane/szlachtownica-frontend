@@ -8,6 +8,13 @@ import _ from 'lodash';
 import { ColoringStrategyService } from '../../services/coloring-strategy.service';
 import { LegendRow, LEGENDS } from '../../shared/legend';
 
+interface ViewBox {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
 @Component({
   selector: 'app-world',
   standalone: true,
@@ -18,7 +25,7 @@ import { LegendRow, LEGENDS } from '../../shared/legend';
 
 export class WorldComponent implements OnInit {
   provinces: Province[] = [];
-  viewBox = { x: 0, y: 0, w: 100, h: 100 };
+  viewBox: ViewBox = { x: 0, y: 0, w: 100, h: 100 };
   window: WindowService = inject(WindowService);
   coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
   readonly highlightedColor: string = '#ffff00';
@@ -26,7 +33,7 @@ export class WorldComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.http.get<Province[]>('http://localhost:8080/world/provinces/all')
       .subscribe((data: Province[]) => {
         this.provinces = data;
@@ -54,7 +61,7 @@ export class WorldComponent implements OnInit {
     return LEGENDS[this.currentColoring].colorPicker(region);
   }
 
-  onRegionClick(region: Region, province: Province) {
+  onRegionClick(region: Region, province: Province): void {
     this.window.setRegion(region);
     this.window.setProvince(province);
   }
@@ -63,7 +70,7 @@ export class WorldComponent implements OnInit {
     if (geometry.type === 'Polygon') {
       return geometry.coordinates
         .map((ring: number[][]) =>
-          ring.map((point, i) =>
+          ring.map((point: number[], i: number) =>
             (i === 0 ? 'M' : 'L') + point[0] + ' ' + (point[1])
           ).join(' ') + ' Z'
         )
@@ -72,43 +79,43 @@ export class WorldComponent implements OnInit {
     return '';
   }
 
-  setInitialViewBox() {
-    const vb = this.getViewBox().split(' ').map(Number);
+  setInitialViewBox(): void {
+    const vb: number[] = this.getViewBox().split(' ').map(Number);
     this.viewBox = { x: vb[0], y: vb[1], w: vb[2], h: vb[3] };
   }
 
   getViewBox(): string {
-    const points = this.provinces.flatMap(p =>
+    const points: number[][] = this.provinces.flatMap((p: Province) =>
       p.area.coordinates.flat()
     );
 
-    const xs = points.map(p => p[0]);
-    const ys = points.map(p => p[1]);
+    const xs: number[] = points.map((p: number[]) => p[0]);
+    const ys: number[] = points.map((p: number[]) => p[1]);
 
-    const minX = Math.min(...xs);
-    const maxX = Math.max(...xs);
-    const minY = Math.min(...ys);
-    const maxY = Math.max(...ys);
+    const minX: number = Math.min(...xs);
+    const maxX: number = Math.max(...xs);
+    const minY: number = Math.min(...ys);
+    const maxY: number = Math.max(...ys);
 
-    const padding = 1;
+    const padding: number = 1;
 
     return `${minX - padding} ${-maxY - padding} ${maxX - minX + 2 * padding} ${maxY - minY + 2 * padding}`;
   }
 
-  onWheel(event: WheelEvent) {
+  onWheel(event: WheelEvent): void {
     event.preventDefault();
 
-    const svg = event.currentTarget as SVGSVGElement;
-    const ctm = svg.getScreenCTM();
+    const svg: SVGSVGElement = event.currentTarget as SVGSVGElement;
+    const ctm: DOMMatrix | null = svg.getScreenCTM();
     if (_.isNil(ctm)) {
       return;
     }
 
-    const zoomFactor = 1.1;
-    const scale = event.deltaY > 0 ? zoomFactor : 1 / zoomFactor;
+    const zoomFactor: number = 1.1;
+    const scale: number = event.deltaY > 0 ? zoomFactor : 1 / zoomFactor;
 
     // punkt mapy pod kursorem, we współrzędnych viewBoxa
-    const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(ctm.inverse());
+    const p: DOMPoint = new DOMPoint(event.clientX, event.clientY).matrixTransform(ctm.inverse());
 
     // ten punkt ma zostać pod kursorem po zmianie skali
     this.viewBox.x = p.x - (p.x - this.viewBox.x) * scale;
@@ -117,27 +124,27 @@ export class WorldComponent implements OnInit {
     this.viewBox.h *= scale;
   }
 
-  isPanning = false;
-  lastX = 0;
-  lastY = 0;
+  isPanning: boolean = false;
+  lastX: number = 0;
+  lastY: number = 0;
 
-  startPan(e: MouseEvent) {
+  startPan(e: MouseEvent): void {
     this.isPanning = true;
     this.lastX = e.clientX;
     this.lastY = e.clientY;
   }
 
-  onPan(e: MouseEvent) {
+  onPan(e: MouseEvent): void {
     if (!this.isPanning) return;
 
-    const svg = e.currentTarget as SVGSVGElement;
-    const ctm = svg.getScreenCTM();
+    const svg: SVGSVGElement = e.currentTarget as SVGSVGElement;
+    const ctm: DOMMatrix | null = svg.getScreenCTM();
     if (_.isNil(ctm)) {
       return;
     }
 
-    const dx = e.clientX - this.lastX;
-    const dy = e.clientY - this.lastY;
+    const dx: number = e.clientX - this.lastX;
+    const dy: number = e.clientY - this.lastY;
 
     // ctm to liczba pikseli ekranu na jednostkę mapy
     this.viewBox.x -= dx / ctm.a;
@@ -147,7 +154,7 @@ export class WorldComponent implements OnInit {
     this.lastY = e.clientY;
   }
 
-  endPan() {
+  endPan(): void {
     this.isPanning = false;
   }
 }

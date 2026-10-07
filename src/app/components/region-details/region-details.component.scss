@@ -4,7 +4,9 @@
 
 .details {
   display: grid;
-  grid-template-columns: auto 1fr;
+  // kolumna etykiet ma limit, żeby długa "Siła magicznego wpływu" nie zjadała miejsca na wartości
+  grid-template-columns: fit-content(42%) 1fr;
+  align-items: baseline;
   gap: 4px 12px;
   margin: 0;
   padding: 10px 12px;
@@ -20,4 +22,26 @@ dt {
 dd {
   margin: 0;
   font-weight: 500;
+}
+
+// Klikalne wartości mają wyglądać jak tekst z kropkowanym podkreśleniem, a nie jak przyciski z formularza.
+// Ujemny margines wyrównuje tekst z wartościami, które przyciskami nie są.
+dd button {
+  padding: 1px 4px;
+  margin: -1px 0 -1px -4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  text-align: left;
+  text-decoration: underline dotted var(--muted);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+dd button:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
 }

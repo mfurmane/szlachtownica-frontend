@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
-import { Climate, EnchantType, Humidity, Region, RegionType, SoilType, TerrainShape } from '../../dto/Map';
-import { REGION_TYPE_LABELS, TERRAIN_SHAPE_LABELS, HUMIDITY_LABELS, CLIMATE_LABELS, ENCHANT_LABELS, SOIL_LABELS } from '../../shared/region-labels';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Characteristic, Region } from '../../dto/Map';
+import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
 
 @Component({
   selector: 'app-region-details',
@@ -9,14 +9,21 @@ import { REGION_TYPE_LABELS, TERRAIN_SHAPE_LABELS, HUMIDITY_LABELS, CLIMATE_LABE
   templateUrl: './region-details.component.html',
   styleUrl: './region-details.component.scss'
 })
-export class RegionDetailsComponent {
+export class RegionDetailsComponent implements OnChanges {
   @Input({ required: true }) region!: Region;
+  @Output() characteristicSelected: EventEmitter<CharacteristicSelection> = new EventEmitter<CharacteristicSelection>();
 
-  regionTypeLabels: Record<RegionType, string> = REGION_TYPE_LABELS;
-  terrainShapeLabels: Record<TerrainShape, string> = TERRAIN_SHAPE_LABELS;
-  humidityLabels: Record<Humidity, string> = HUMIDITY_LABELS;
-  climateLabels: Record<Climate, string> = CLIMATE_LABELS;
-  enchantLabels: Record<EnchantType, string> = ENCHANT_LABELS;
-  soilLabels: Record<SoilType, string> = SOIL_LABELS;
+  values: Array<CharacteristicSelection> = [];
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['region']) {
+      this.values = Object.values(Characteristic)
+      .map((characteristic: Characteristic) => 
+        regionAsCharacteristicSelection(characteristic, this.region)
+      );
+    }
+  }
+
+  characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
 
 }

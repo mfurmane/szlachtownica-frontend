@@ -1,6 +1,7 @@
 import { CLIMATE_COLORS, ENCHANT_COLORS, HUMIDITY_COLORS, REGION_TYPE_COLORS, SOIL_COLORS, TERRAIN_SHAPE_COLORS } from "./region-colors";
 import { CLIMATE_LABELS, ENCHANT_LABELS, HUMIDITY_LABELS, REGION_TYPE_LABELS, SOIL_LABELS, TERRAIN_SHAPE_LABELS } from "./region-labels";
 import { Characteristic, Climate, EnchantType, Humidity, Region, RegionType, SoilType, TerrainShape } from "../dto/Map";
+import _ from "lodash";
 
 export const CHARACTERISTIC_LABELS: Record<Characteristic, string> = {
   [Characteristic.REGION_TYPE]: 'Typ regionu',
@@ -24,6 +25,20 @@ export interface LegendCategory {
   readonly colorPicker: (region: Region) => string;
 }
 
+export interface CharacteristicSelection {
+  readonly row: LegendRow;
+  readonly characteristic: Characteristic;
+}
+
+export function regionAsCharacteristicSelection(characteristic: Characteristic, region: Region): CharacteristicSelection {
+  const row: LegendRow | undefined = LEGENDS[characteristic].rows.find((row: LegendRow) => row.matches(region));
+  if (!_.isNil(row)) {
+    return {characteristic, row};
+  } else {
+    throw new Error('Data integrity violation.');
+  }
+}
+
 function buildCategory<T extends string>(
   values: T[],
   labels: Record<T, string>,
@@ -31,7 +46,7 @@ function buildCategory<T extends string>(
   picker: (region: Region) => T
 ): LegendCategory {
   return {
-    rows: values.map(value => ({
+    rows: values.map((value: T) => ({
       value,
       label: labels[value],
       color: colors[value],
