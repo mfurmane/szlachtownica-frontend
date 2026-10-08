@@ -1,54 +1,33 @@
-import { Component, inject, OnInit } from '@angular/core';
-import _ from 'lodash';
-import { Province, Region, SubProvince } from '../../dto/Map';
-import { WindowService } from '../../services/window.service';
+import { Component, inject } from '@angular/core';
+import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import { RegionDetailsComponent } from '../region-details/region-details.component';
 import { ColoringStrategyComponent } from '../coloring-strategy/coloring-strategy.component';
 import { CharacteristicSelection } from '../../shared/legend';
 import { ColoringStrategyService } from '../../services/coloring-strategy.service';
+import { Observable } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-window',
   standalone: true,
-  imports: [RegionDetailsComponent, ColoringStrategyComponent],
+  imports: [RegionDetailsComponent, ColoringStrategyComponent, AsyncPipe],
   templateUrl: './window.component.html',
   styleUrl: './window.component.scss'
 })
-export class WindowComponent implements OnInit {
+export class WindowComponent {
+  private readonly selectionService: MapSelectionService = inject(MapSelectionService);
+  private readonly coloringService: ColoringStrategyService = inject(ColoringStrategyService);
 
-  window: WindowService = inject(WindowService);
-  private coloringService: ColoringStrategyService = inject(ColoringStrategyService);
+  readonly selection$: Observable<MapSelection | undefined> = this.selectionService.selection$;
 
-  province?: string;
-  subprovince?: number;
-  region?: Region;
+  showLegend: boolean = true;
+
+  toggleShowLegend(): void {
+    this.showLegend = !this.showLegend;
+  }
 
   onCharacteristicSelected(selection: CharacteristicSelection): void {
     this.coloringService.showCategory(selection.characteristic, selection.row);
-  }
-
-  ngOnInit(): void {
-    this.window.province$.subscribe((prov: Province | undefined) => {
-      if (_.isNil(prov)) {
-        this.province = undefined;
-      } else {
-        this.province = prov.name;
-      }
-    });
-    this.window.subProvince$.subscribe((prov: SubProvince | undefined) => {
-      if (_.isNil(prov)) {
-        this.subprovince = undefined;
-      } else {
-        this.subprovince = prov.id;
-      }
-    });
-    this.window.region$.subscribe((prov: Region | undefined) => {
-      if (_.isNil(prov)) {
-        this.region = undefined;
-      } else {
-        this.region = prov;
-      }
-    });
   }
 
 }

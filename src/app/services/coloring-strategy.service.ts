@@ -8,13 +8,11 @@ import { LegendRow } from '../shared/legend';
 })
 export class ColoringStrategyService {
 
-  constructor() { }
+  private readonly currentColoringSubject: BehaviorSubject<Characteristic> = new BehaviorSubject<Characteristic>(Characteristic.REGION_TYPE);
+  readonly currentColoring$: Observable<Characteristic> = this.currentColoringSubject.asObservable();
 
-  private currentColoringSubject: BehaviorSubject<Characteristic> = new BehaviorSubject<Characteristic>(Characteristic.REGION_TYPE);
-  currentColoring$: Observable<Characteristic> = this.currentColoringSubject.asObservable();
-
-  private highlightedCategorySubject: BehaviorSubject<LegendRow | undefined> = new BehaviorSubject<LegendRow | undefined>(undefined);
-  highlightedCategory$: Observable<LegendRow | undefined> = this.highlightedCategorySubject.asObservable();
+  private readonly highlightedCategorySubject: BehaviorSubject<LegendRow | undefined> = new BehaviorSubject<LegendRow | undefined>(undefined);
+  readonly highlightedCategory$: Observable<LegendRow | undefined> = this.highlightedCategorySubject.asObservable();
 
   setCurrentColoring(currentColoring: Characteristic): void {
     this.currentColoringSubject.next(currentColoring);

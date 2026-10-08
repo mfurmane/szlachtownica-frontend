@@ -11,13 +11,13 @@ import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicS
 })
 export class RegionDetailsComponent {
 
-  region: InputSignal<Region> = input.required<Region>();
-  values: Signal<Array<CharacteristicSelection>> = computed((): Array<CharacteristicSelection> =>
+  readonly region: InputSignal<Region> = input.required<Region>();
+  readonly values: Signal<Array<CharacteristicSelection>> = computed((): Array<CharacteristicSelection> =>
     Object.values(Characteristic).map((characteristic: Characteristic) =>
       regionAsCharacteristicSelection(characteristic, this.region())
     ));
-  characteristicSelected: OutputEmitterRef<CharacteristicSelection> = output<CharacteristicSelection>();
+  readonly characteristicSelected: OutputEmitterRef<CharacteristicSelection> = output<CharacteristicSelection>();
 
-  characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
+  readonly characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
 
 }

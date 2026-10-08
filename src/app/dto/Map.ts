@@ -36,7 +36,6 @@ export interface Region {
   woodRichness: number;
   developmentLevel: number;
   enchantmentLevel: number;
-  // coast: boolean;
 }
 
 export enum Characteristic {

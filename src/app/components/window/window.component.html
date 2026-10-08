@@ -1,11 +1,13 @@
 <h2>Podgląd</h2>
 
-@if (region && province) {
-<h3>Prowincja: {{ province }}</h3>
-<app-region-details [region]="region" (characteristicSelected)="onCharacteristicSelected($event)"/>
+@if (selection$ | async; as selection) {
+    <h3>Prowincja: {{ selection.province.name }}</h3>
+    <app-region-details [region]="selection.region" (characteristicSelected)="onCharacteristicSelected($event)"/>
 }
 @else {
     <h3>Wybierz region</h3>
 }
-
-<app-coloring-strategy></app-coloring-strategy>
+<button (click)="toggleShowLegend()">{{ showLegend ? "Ukryj legendę" : "Pokaż legendę" }}</button>
+@if (showLegend) {
+    <app-coloring-strategy></app-coloring-strategy>
+}

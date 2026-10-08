@@ -13,7 +13,7 @@
       <ng-container *ngFor="let subprovince of province.subProvinces">
         <ng-container *ngFor="let region of subprovince.regions">
           <path
-            [attr.d]="toPath(region.area)"
+            [attr.d]="paths.get(region.id)"
             [attr.fill]="getColor(region)"
             stroke="black"
             vector-effect="non-scaling-stroke"

@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Characteristic } from '../../dto/Map';
 import { ColoringStrategyService } from '../../services/coloring-strategy.service';
 import { CHARACTERISTIC_LABELS, LegendCategory, LegendRow, LEGENDS } from '../../shared/legend';
@@ -12,24 +13,23 @@ import { CHARACTERISTIC_LABELS, LegendCategory, LegendRow, LEGENDS } from '../..
 })
 export class ColoringStrategyComponent implements OnInit {
 
+  readonly availableColorings: Array<Characteristic> = Object.values(Characteristic);
+  readonly characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
+
+  private readonly coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
+
+  currentColoring: Characteristic = Characteristic.REGION_TYPE;
+  highlighted?: LegendRow;
+
   ngOnInit(): void {
-    this.coloringStrategyService.currentColoring$.subscribe((currentColoring: Characteristic) => {
+    this.coloringStrategyService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((currentColoring: Characteristic) => {
       this.currentColoring = currentColoring;
     });
-    this.coloringStrategyService.highlightedCategory$.subscribe((highlighted: LegendRow | undefined) => {
+    this.coloringStrategyService.highlightedCategory$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((highlighted: LegendRow | undefined) => {
       this.highlighted = highlighted;
     });
   }
-
-  private coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
-
-  currentColoring: Characteristic = Characteristic.REGION_TYPE;
-
-  highlighted?: LegendRow;
-
-  availableColorings: Array<Characteristic> = Object.values(Characteristic);
-
-  characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
 
   getLegend(): LegendCategory {
     return LEGENDS[this.currentColoring];
