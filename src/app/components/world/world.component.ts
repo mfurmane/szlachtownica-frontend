@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { Characteristic, Province, Region, SubProvince } from '../../dto/Map';
-import { MapSelectionService } from '../../services/map-selection.service';
+import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import type { Polygon } from 'geojson';
 import _ from 'lodash';
 import { ColoringStrategyService } from '../../services/coloring-strategy.service';
@@ -36,6 +36,7 @@ export class WorldComponent implements OnInit {
   paths: Map<number, string> = new Map<number, string>();
   provinces: Province[] = [];
   viewBox: ViewBox = { x: 0, y: 0, w: 100, h: 100 };
+  selectedRegion?: Region;
 
   private highlighted?: LegendRow;
   private currentColoring: Characteristic = Characteristic.REGION_TYPE;
@@ -60,6 +61,10 @@ export class WorldComponent implements OnInit {
       .subscribe((highlighted: LegendRow | undefined) => {
         this.highlighted = highlighted;
       });
+    this.selectionService.selection$.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((selection: MapSelection | undefined) => {
+        this.selectedRegion = selection?.region;
+      });
   }
 
   getColor(region: Region): string {
@@ -75,6 +80,14 @@ export class WorldComponent implements OnInit {
 
   onRegionClick(region: Region, province: Province): void {
     this.selectionService.setSelection({ region, province });
+  }
+
+  onRegionEnter(region: Region, province: Province): void {
+    this.selectionService.setHovered({ region, province });
+  }
+
+  onRegionLeave(): void {
+    this.selectionService.clearHovered();
   }
 
   onWheel(event: WheelEvent): void {

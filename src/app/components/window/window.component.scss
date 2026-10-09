@@ -4,3 +4,20 @@
   gap: 10px;
   padding: 16px;
 }
+
+%section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 16px;
+}
+
+.selected {
+  @extend %section;
+  border-left: 3px solid var(--accent);
+}
+
+.hovered {
+  @extend %section;
+  border-left: 3px dashed var(--muted);
+}
