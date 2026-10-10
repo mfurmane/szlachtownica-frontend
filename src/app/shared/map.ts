@@ -38,6 +38,11 @@ export interface Region {
   enchantmentLevel: number;
 }
 
+export function allRegions(provinces: Array<Province>): Array<Region> {
+  return provinces.flatMap((province: Province) => province.subProvinces)
+    .flatMap((subprovince: SubProvince) => subprovince.regions);
+}
+
 export enum Characteristic {
   REGION_TYPE = 'REGION_TYPE',
   TERRAIN_SHAPE = 'TERRAIN_SHAPE',

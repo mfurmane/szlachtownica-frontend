@@ -1,5 +1,5 @@
 import { Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
-import { Characteristic, Region } from '../../dto/Map';
+import { Characteristic, Region } from '../../shared/map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
 
 @Component({

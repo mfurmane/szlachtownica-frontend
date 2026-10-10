@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Province, Region } from '../dto/Map';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Province, Region } from '../shared/map';
 
 export interface MapSelection {
   region: Region;

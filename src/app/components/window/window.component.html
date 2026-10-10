@@ -1,9 +1,3 @@
-
-<button (click)="toggleShowLegend()">{{ showLegend ? "Ukryj legendę" : "Pokaż legendę" }}</button>
-@if (showLegend) {
-    <app-coloring-strategy></app-coloring-strategy>
-}
-
 <section class="selected">
     <h2>Wybrany region</h2>
     @if (selection$ | async; as selection) {

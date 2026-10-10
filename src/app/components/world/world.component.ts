@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { Characteristic, Province, Region, SubProvince } from '../../dto/Map';
+import { allRegions, Characteristic, Province, Region } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import type { Polygon } from 'geojson';
 import _ from 'lodash';
 import { ColoringStrategyService } from '../../services/coloring-strategy.service';
 import { LegendRow, LEGENDS } from '../../shared/legend';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { WorldStateService } from '../../services/world-state.service';
+import { LegendComponent } from '../legend/legend.component';
+import { ColoringModesComponent } from '../coloring-modes/coloring-modes.component';
 
 interface ViewBox {
   x: number;
@@ -19,16 +21,16 @@ interface ViewBox {
 @Component({
   selector: 'app-world',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, LegendComponent, ColoringModesComponent],
   templateUrl: './world.component.html',
   styleUrl: './world.component.scss'
 })
 export class WorldComponent implements OnInit {
 
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
-  private readonly http: HttpClient = inject(HttpClient);
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
   private readonly coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
+  private readonly worldStateService: WorldStateService = inject(WorldStateService);
 
   private readonly highlightedColor: string = '#ffff00';
   private readonly unhighlightedColor: string = '#292918';
@@ -46,8 +48,7 @@ export class WorldComponent implements OnInit {
   private lastY: number = 0;
 
   ngOnInit(): void {
-    this.http.get<Province[]>('http://localhost:8080/world/provinces/all')
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data: Province[]) => {
         this.provinces = data;
         this.paths = this.preparePaths(data);
@@ -180,12 +181,8 @@ export class WorldComponent implements OnInit {
 
   private preparePaths(provinces: Province[]): Map<number, string> {
     const result: Map<number, string> = new Map<number, string>();
-    provinces.forEach((province: Province) => {
-      province.subProvinces.forEach((subProvince: SubProvince) => {
-        subProvince.regions.forEach((region: Region) => {
-          result.set(region.id, this.toPath(region.area));
-        });
-      });
+    allRegions(provinces).forEach((region: Region) => {
+      result.set(region.id, this.toPath(region.area));
     });
     return result;
   }

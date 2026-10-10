@@ -1,6 +1,6 @@
 import { CLIMATE_COLORS, ENCHANT_COLORS, HUMIDITY_COLORS, REGION_TYPE_COLORS, SOIL_COLORS, TERRAIN_SHAPE_COLORS } from "./region-colors";
 import { CLIMATE_LABELS, ENCHANT_LABELS, HUMIDITY_LABELS, REGION_TYPE_LABELS, SOIL_LABELS, TERRAIN_SHAPE_LABELS } from "./region-labels";
-import { Characteristic, Climate, EnchantType, Humidity, Region, RegionType, SoilType, TerrainShape } from "../dto/Map";
+import { Characteristic, Climate, EnchantType, Humidity, Region, RegionType, SoilType, TerrainShape } from "./map";
 import _ from "lodash";
 
 export const CHARACTERISTIC_LABELS: Record<Characteristic, string> = {

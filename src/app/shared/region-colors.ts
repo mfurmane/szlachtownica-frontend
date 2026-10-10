@@ -1,4 +1,4 @@
-import { Climate, EnchantType, Humidity, RegionType, SoilType, TerrainShape } from "../dto/Map";
+import { Climate, EnchantType, Humidity, RegionType, SoilType, TerrainShape } from "./map";
 
   export const REGION_TYPE_COLORS: Record<RegionType, string> = {
     [RegionType.ABANDONED_REACH]: '#000000',

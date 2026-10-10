@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Characteristic } from '../dto/Map';
+import { Characteristic } from '../shared/map';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LegendRow } from '../shared/legend';
 
