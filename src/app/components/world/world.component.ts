@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { allRegions, Characteristic, Province, Region } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
@@ -23,12 +23,11 @@ interface ViewBox {
 @Component({
   selector: 'app-world',
   standalone: true,
-  imports: [CommonModule, LegendComponent, ColoringModesComponent, RegionTooltipComponent],
+  imports: [LegendComponent, ColoringModesComponent, RegionTooltipComponent, AsyncPipe],
   templateUrl: './world.component.html',
   styleUrl: './world.component.scss'
 })
 export class WorldComponent implements OnInit {
-
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
   private readonly coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);

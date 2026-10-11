@@ -18,6 +18,5 @@ export class RegionTooltipComponent {
     regionAsCharacteristicSelection(this.characteristic(), this.selection().region));
 
   readonly characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
-  readonly enchantment: Characteristic = Characteristic.ENCHANT;
-
+  readonly Characteristic: typeof Characteristic = Characteristic;
 }

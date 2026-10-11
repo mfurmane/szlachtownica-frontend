@@ -13,9 +13,9 @@
   (mouseleave)="endPan()"
 >
   <g transform="scale(1,-1)">
-    <ng-container *ngFor="let province of provinces">
-      <ng-container *ngFor="let subprovince of province.subProvinces">
-        <ng-container *ngFor="let region of subprovince.regions">
+    @for (province of provinces; track province.id) {
+      @for (subprovince of province.subProvinces; track subprovince.id) {
+        @for (region of subprovince.regions; track region.id) {
           <path
             [attr.d]="paths.get(region.id)"
             [attr.fill]="getColor(region)"
@@ -28,9 +28,9 @@
             (mouseenter)="onRegionEnter(region, province)"
             (mouseleave)="onRegionLeave()">
           </path>
-        </ng-container>
-      </ng-container>
-    </ng-container>
+        }
+      }
+    }
     @if (selectedRegion) {
       <path class="selected"
         [attr.d]="paths.get(selectedRegion.id)"

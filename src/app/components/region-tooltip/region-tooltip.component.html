@@ -1,7 +1,13 @@
 <dl class="details">
   <dt>Region</dt><dd>{{ selection().region.id }}, {{ selection().province.name }}</dd>
   <dt>{{ characteristicLabels[characteristic()] }}</dt><dd>{{ value().row.label }}</dd>
-  @if (characteristic() === enchantment) {
-    <dt>Siła magicznego wpływu</dt><dd>{{ selection().region.enchantmentLevel }}</dd>
+  @switch (characteristic()) {
+    @case (Characteristic.ENCHANT) {
+      <dt>Siła magicznego wpływu</dt><dd>{{ selection().region.enchantmentLevel }}</dd>
+    }
+    @case (Characteristic.SOIL) {
+      <dt>Żyzność</dt><dd>{{ selection().region.fertility }}</dd>
+      <dt>Łatwość rolnictwa</dt><dd>{{ selection().region.plantingEasiness }}</dd>
+    }
   }
 </dl>
