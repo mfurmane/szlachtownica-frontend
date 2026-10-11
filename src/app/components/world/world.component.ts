@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, Signal, inject, viewChild } from '@angular/core';
 import { allRegions, Characteristic, Province, Region } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import type { Polygon } from 'geojson';
@@ -37,6 +37,7 @@ export class WorldComponent implements OnInit {
   private readonly unhighlightedColor: string = '#292918';
 
   readonly hovered$: Observable<MapSelection | undefined> = this.selectionService.hovered$;
+  readonly mapSvg: Signal<ElementRef<SVGSVGElement>> = viewChild.required<ElementRef<SVGSVGElement>>('map');
 
   paths: Map<number, string> = new Map<number, string>();
   provinces: Province[] = [];
@@ -104,7 +105,7 @@ export class WorldComponent implements OnInit {
   onWheel(event: WheelEvent): void {
     event.preventDefault();
 
-    const svg: SVGSVGElement = event.currentTarget as SVGSVGElement;
+    const svg: SVGSVGElement = this.mapSvg().nativeElement;
     const ctm: DOMMatrix | null = svg.getScreenCTM();
     if (_.isNil(ctm)) {
       return;
@@ -159,7 +160,7 @@ export class WorldComponent implements OnInit {
   private pan(e: MouseEvent): void {
     if (!this.isPanning) return;
 
-    const svg: SVGSVGElement = e.currentTarget as SVGSVGElement;
+    const svg: SVGSVGElement = this.mapSvg().nativeElement;
     const ctm: DOMMatrix | null = svg.getScreenCTM();
     if (_.isNil(ctm)) {
       return;
@@ -190,7 +191,7 @@ export class WorldComponent implements OnInit {
   }
 
   private rememberCursorPosition(e: MouseEvent): void {
-    const rect: DOMRect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
+    const rect: DOMRect = this.mapSvg().nativeElement.getBoundingClientRect();
     this.cursorX = e.clientX - rect.left;
     this.cursorY = e.clientY - rect.top;
   }

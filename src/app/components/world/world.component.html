@@ -2,7 +2,7 @@
   <app-coloring-modes></app-coloring-modes>
 </div>
 
-<svg
+<svg #map
   width="100%"
   height="90%"
   [attr.viewBox]="viewBox.x + ' ' + viewBox.y + ' ' + viewBox.w + ' ' + viewBox.h"
@@ -51,7 +51,7 @@
     class="tooltip"
     [selection]="hovered"
     [characteristic]="currentColoring"
-    [style.left.px]="cursorX + 14"
-    [style.top.px]="cursorY + 14"
+    [style.left.px]="cursorX + 8"
+    [style.top.px]="cursorY + 8"
     />
 }
