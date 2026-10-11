@@ -2,11 +2,12 @@ import { Component, computed, input, InputSignal, Signal } from '@angular/core';
 import { MapSelection } from '../../services/map-selection.service';
 import { Characteristic } from '../../shared/map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-region-tooltip',
   standalone: true,
-  imports: [],
+  imports: [DecimalPipe],
   templateUrl: './region-tooltip.component.html',
   styleUrl: './region-tooltip.component.scss'
 })

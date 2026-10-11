@@ -3,11 +3,11 @@
   <dt>{{ characteristicLabels[characteristic()] }}</dt><dd>{{ value().row.label }}</dd>
   @switch (characteristic()) {
     @case (Characteristic.ENCHANT) {
-      <dt>Siła magicznego wpływu</dt><dd>{{ selection().region.enchantmentLevel }}</dd>
+      <dt>Siła wpływu</dt><dd>{{ selection().region.enchantmentLevel | number: '1.0-2' }}</dd>
     }
     @case (Characteristic.SOIL) {
-      <dt>Żyzność</dt><dd>{{ selection().region.fertility }}</dd>
-      <dt>Łatwość rolnictwa</dt><dd>{{ selection().region.plantingEasiness }}</dd>
+      <dt>Żyzność</dt><dd>{{ selection().region.fertility | number: '1.0-2' }}</dd>
+      <dt>Łatwość upraw</dt><dd>{{ selection().region.plantingEasiness | number: '1.0-2' }}</dd>
     }
   }
 </dl>

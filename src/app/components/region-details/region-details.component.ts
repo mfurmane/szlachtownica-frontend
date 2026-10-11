@@ -1,11 +1,12 @@
 import { Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
 import { Characteristic, Region } from '../../shared/map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-region-details',
   standalone: true,
-  imports: [],
+  imports: [DecimalPipe],
   templateUrl: './region-details.component.html',
   styleUrl: './region-details.component.scss'
 })
