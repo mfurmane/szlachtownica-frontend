@@ -18,7 +18,6 @@ export class WindowComponent {
   private readonly coloringService: ColoringStrategyService = inject(ColoringStrategyService);
 
   readonly selection$: Observable<MapSelection | undefined> = this.selectionService.selection$;
-  readonly hovered$: Observable<MapSelection | undefined> = this.selectionService.hovered$;
 
   onCharacteristicSelected(selection: CharacteristicSelection): void {
     this.coloringService.showCategory(selection.characteristic, selection.row);

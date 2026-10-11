@@ -8,7 +8,7 @@
   [attr.viewBox]="viewBox.x + ' ' + viewBox.y + ' ' + viewBox.w + ' ' + viewBox.h"
     (wheel)="onWheel($event)"
   (mousedown)="startPan($event)"
-  (mousemove)="onPan($event)"
+  (mousemove)="onMouseMove($event)"
   (mouseup)="endPan()"
   (mouseleave)="endPan()"
 >
@@ -45,3 +45,13 @@
 <div class="legend-overlay">
   <app-legend></app-legend>
 </div>
+
+@if (hovered$ | async; as hovered) {
+  <app-region-tooltip
+    class="tooltip"
+    [selection]="hovered"
+    [characteristic]="currentColoring"
+    [style.left.px]="cursorX + 14"
+    [style.top.px]="cursorY + 14"
+    />
+}

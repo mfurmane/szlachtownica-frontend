@@ -10,6 +10,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WorldStateService } from '../../services/world-state.service';
 import { LegendComponent } from '../legend/legend.component';
 import { ColoringModesComponent } from '../coloring-modes/coloring-modes.component';
+import { Observable } from 'rxjs';
+import { RegionTooltipComponent } from '../region-tooltip/region-tooltip.component';
 
 interface ViewBox {
   x: number;
@@ -21,7 +23,7 @@ interface ViewBox {
 @Component({
   selector: 'app-world',
   standalone: true,
-  imports: [CommonModule, LegendComponent, ColoringModesComponent],
+  imports: [CommonModule, LegendComponent, ColoringModesComponent, RegionTooltipComponent],
   templateUrl: './world.component.html',
   styleUrl: './world.component.scss'
 })
@@ -35,13 +37,17 @@ export class WorldComponent implements OnInit {
   private readonly highlightedColor: string = '#ffff00';
   private readonly unhighlightedColor: string = '#292918';
 
+  readonly hovered$: Observable<MapSelection | undefined> = this.selectionService.hovered$;
+
   paths: Map<number, string> = new Map<number, string>();
   provinces: Province[] = [];
   viewBox: ViewBox = { x: 0, y: 0, w: 100, h: 100 };
+  currentColoring: Characteristic = Characteristic.REGION_TYPE;
   selectedRegion?: Region;
+  cursorX: number = 0;
+  cursorY: number = 0;
 
   private highlighted?: LegendRow;
-  private currentColoring: Characteristic = Characteristic.REGION_TYPE;
 
   private isPanning: boolean = false;
   private lastX: number = 0;
@@ -66,6 +72,11 @@ export class WorldComponent implements OnInit {
       .subscribe((selection: MapSelection | undefined) => {
         this.selectedRegion = selection?.region;
       });
+  }
+
+  onMouseMove(e: MouseEvent): void {
+    this.rememberCursorPosition(e);
+    this.pan(e);
   }
 
   getColor(region: Region): string {
@@ -119,26 +130,6 @@ export class WorldComponent implements OnInit {
     this.lastY = e.clientY;
   }
 
-  onPan(e: MouseEvent): void {
-    if (!this.isPanning) return;
-
-    const svg: SVGSVGElement = e.currentTarget as SVGSVGElement;
-    const ctm: DOMMatrix | null = svg.getScreenCTM();
-    if (_.isNil(ctm)) {
-      return;
-    }
-
-    const dx: number = e.clientX - this.lastX;
-    const dy: number = e.clientY - this.lastY;
-
-    // ctm to liczba pikseli ekranu na jednostkę mapy
-    this.viewBox.x -= dx / ctm.a;
-    this.viewBox.y -= dy / ctm.d;
-
-    this.lastX = e.clientX;
-    this.lastY = e.clientY;
-  }
-
   endPan(): void {
     this.isPanning = false;
   }
@@ -166,6 +157,26 @@ export class WorldComponent implements OnInit {
     };
   }
 
+  private pan(e: MouseEvent): void {
+    if (!this.isPanning) return;
+
+    const svg: SVGSVGElement = e.currentTarget as SVGSVGElement;
+    const ctm: DOMMatrix | null = svg.getScreenCTM();
+    if (_.isNil(ctm)) {
+      return;
+    }
+
+    const dx: number = e.clientX - this.lastX;
+    const dy: number = e.clientY - this.lastY;
+
+    // ctm to liczba pikseli ekranu na jednostkę mapy
+    this.viewBox.x -= dx / ctm.a;
+    this.viewBox.y -= dy / ctm.d;
+
+    this.lastX = e.clientX;
+    this.lastY = e.clientY;
+  }
+
   private toPath(geometry: Polygon): string {
     if (geometry.type === 'Polygon') {
       return geometry.coordinates
@@ -177,6 +188,12 @@ export class WorldComponent implements OnInit {
         .join(' ');
     }
     return '';
+  }
+
+  private rememberCursorPosition(e: MouseEvent): void {
+    const rect: DOMRect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
+    this.cursorX = e.clientX - rect.left;
+    this.cursorY = e.clientY - rect.top;
   }
 
   private preparePaths(provinces: Province[]): Map<number, string> {

@@ -1,0 +1,7 @@
+<dl class="details">
+  <dt>Region</dt><dd>{{ selection().region.id }}, {{ selection().province.name }}</dd>
+  <dt>{{ characteristicLabels[characteristic()] }}</dt><dd>{{ value().row.label }}</dd>
+  @if (characteristic() === enchantment) {
+    <dt>Siła magicznego wpływu</dt><dd>{{ selection().region.enchantmentLevel }}</dd>
+  }
+</dl>

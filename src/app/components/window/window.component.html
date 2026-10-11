@@ -1,4 +1,4 @@
-<section class="selected">
+<section class="selection">
     <h2>Wybrany region</h2>
     @if (selection$ | async; as selection) {
         <h3>Prowincja: {{ selection.province.name }}</h3>
@@ -7,17 +7,6 @@
     }
     @else {
         <h3>Wybierz region</h3>
-    }
-</section>
-
-<section class="hovered">
-    <h2>Pod kursorem</h2>
-    @if (hovered$ | async; as hovered) {
-        <h3>Prowincja: {{ hovered.province.name }}</h3>
-        <app-region-details [region]="hovered.region" (characteristicSelected)="onCharacteristicSelected($event)"/>
-    }
-    @else {
-        <h3>Najedź na region</h3>
     }
 </section>
 
