@@ -1,0 +1,50 @@
+// Wspólny wygląd kart miasta i regionu: dymek na mapie i panel boczny.
+// Rozmiary w em, więc karta skaluje się od font-size komponentu, który ją dołącza.
+
+// Nagłówek: nazwa, a pod nią szary podpis (typ, prowincja)
+@mixin card-header {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0.4em;
+  margin-bottom: 0.4em;
+  border-bottom: 1px solid var(--border);
+
+  .subtitle {
+    color: var(--muted);
+  }
+}
+
+// Pary klucz–wartość
+@mixin details-list {
+  display: grid;
+  align-items: baseline;
+  margin: 0;
+
+  dt {
+    color: var(--muted);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+// Cechy miasta jako etykiety, które zawijają się do kolejnych wierszy
+@mixin traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35em;
+  margin: 0.6em 0 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.1em 0.65em;
+    font-size: 0.9em;
+    white-space: nowrap;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+  }
+}

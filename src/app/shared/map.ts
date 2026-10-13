@@ -1,4 +1,4 @@
-import type { Polygon } from 'geojson';
+import type { Point, Polygon } from 'geojson';
 
 export interface Province {
   id: number;
@@ -17,6 +17,7 @@ export interface SubProvince {
 export interface Region {
   id: number;
   area: Polygon;
+  places: Place[];
 
   humidity: Humidity;
   climate: Climate;
@@ -38,9 +39,70 @@ export interface Region {
   enchantmentLevel: number;
 }
 
+export interface Place {
+  id: number;
+  location: Point;
+  name: string;
+  type: PlaceType;
+  placeCharacteristics: Array<PlaceCharacteristic>;
+}
+
+export interface ExtendedPlace {
+  place: Place;
+  region: Region;
+  province: Province;
+}
+
 export function allRegions(provinces: Array<Province>): Array<Region> {
-  return provinces.flatMap((province: Province) => province.subProvinces)
+  return provinces
+    .flatMap((province: Province) => province.subProvinces)
     .flatMap((subprovince: SubProvince) => subprovince.regions);
+}
+
+export function allPlaces(provinces: Array<Province>): Array<ExtendedPlace> {
+  return provinces
+    .flatMap((province: Province) => province.subProvinces
+      .flatMap((subprovince: SubProvince) => subprovince.regions
+        .flatMap((region: Region) => region.places
+          .map((place: Place) => ({ place, region, province })))));
+}
+
+export enum PlaceType {
+  SETTLEMENT = 'SETTLEMENT',         // zwykła osada, point + range or area
+
+  NOBLE_MANOR = 'NOBLE_MANOR',        // posiadłość ziemska, point + area
+
+  NOBLE_RESIDENCE = 'NOBLE_RESIDENCE',    // siedziba szlachecka, point
+  COURT = 'COURT',              // ośrodek władzy prowincji lub kraju, point
+  MONASTERY = 'MONASTERY',          // klasztor / zakon, point
+  FORTRESS = 'FORTRESS',           // fort, twierdza, point
+  ENCHANT_CENTER = 'ENCHANT_CENTER', // miejsce o silnym znaczeniu magicznym, point
+
+  LAKE = 'LAKE', // area
+  RIVER = 'RIVER', //linestring
+  ROAD = 'ROAD'
+}
+
+export enum PlaceCharacteristic {
+    CAPITAL = 'CAPITAL',
+    LOCAL_CAPITAL = 'LOCAL_CAPITAL',
+
+    HUNTING = 'HUNTING',
+    LUMBERING = 'LUMBERING',
+    PLANTING = 'PLANTING',
+    FARMING = 'FARMING',
+    FISHING = 'FISHING',
+    FORTIFIED = 'FORTIFIED',
+    MILITARY = 'MILITARY',
+    TRADING = 'TRADING',
+    ARTISAN = 'ARTISAN',
+    MINING = 'MINING',
+    RESORT = 'RESORT',
+    ENCHANTED = 'ENCHANTED',
+    SEA_PORT = 'SEA_PORT',
+    RIVER_PORT = 'RIVER_PORT',
+
+    WILDERNESS_ENCHANT = 'WILDERNESS_ENCHANT'
 }
 
 export enum Characteristic {

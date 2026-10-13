@@ -1,12 +1,11 @@
 <section class="selection">
-    <h2>Wybrany region</h2>
-    @if (selection$ | async; as selection) {
-        <h3>Prowincja: {{ selection.province.name }}</h3>
-        <app-region-details [region]="selection.region" (characteristicSelected)="onCharacteristicSelected($event)"/>
-        <button (click)="clearSelection()">Wyczyść zaznaczenie</button>
-    }
-    @else {
-        <h3>Wybierz region</h3>
-    }
+  <h2>Wybrany element</h2>
+  @if (selection$ | async; as selection) {
+    <app-region-details [selection]="selection" (characteristicSelected)="onCharacteristicSelected($event)"/>
+    <button (click)="clearSelection()">Wyczyść zaznaczenie</button>
+  }
+  @else {
+    <h3>Wybierz element</h3>
+  }
 </section>
 

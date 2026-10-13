@@ -11,8 +11,9 @@
   (mousemove)="onMouseMove($event)"
   (mouseup)="endPan()"
   (mouseleave)="endPan()"
+  (click)="onMapClick($event)"
 >
-  <g transform="scale(1,-1)">
+  <g transform="scale(1,-1)" #mapG>
     @for (province of provinces; track province.id) {
       @for (subprovince of province.subProvinces; track subprovince.id) {
         @for (region of subprovince.regions; track region.id) {
@@ -26,7 +27,7 @@
             stroke-linecap="round"
             (click)="onRegionClick(region, province)"
             (mouseenter)="onRegionEnter(region, province)"
-            (mouseleave)="onRegionLeave()">
+            (mouseleave)="onElementLeave()">
           </path>
         }
       }
@@ -38,6 +39,25 @@
         stroke-linejoin="round"
         stroke-linecap="round">
       </path>
+    }
+    @for (extendedPlace of places; track extendedPlace.place.id) {
+      <circle
+        [attr.cx]="extendedPlace.place.location.coordinates[0]"
+        [attr.cy]="extendedPlace.place.location.coordinates[1]"
+        r="0.05"
+        fill="red"
+        stroke="black"
+        vector-effect="non-scaling-stroke"
+        stroke-width="2.4"
+        (mouseenter)="onPlaceEnter(extendedPlace)"
+        (mouseleave)="onElementLeave()"
+        (click)="onPlaceClick(extendedPlace)"/>
+    }
+    @if (selectedPlace) {
+      <circle class="selected"
+        [attr.cx]="selectedPlace.location.coordinates[0]"
+        [attr.cy]="selectedPlace.location.coordinates[1]"
+        vector-effect="non-scaling-stroke"/>
     }
   </g>
 </svg>

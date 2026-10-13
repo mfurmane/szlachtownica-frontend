@@ -1,13 +1,33 @@
-<dl class="details">
-  <dt>Region</dt><dd>{{ selection().region.id }}, {{ selection().province.name }}</dd>
-  <dt>{{ characteristicLabels[characteristic()] }}</dt><dd>{{ value().row.label }}</dd>
-  @switch (characteristic()) {
-    @case (Characteristic.ENCHANT) {
-      <dt>Siła wpływu</dt><dd>{{ selection().region.enchantmentLevel | number: '1.0-2' }}</dd>
-    }
-    @case (Characteristic.SOIL) {
-      <dt>Żyzność</dt><dd>{{ selection().region.fertility | number: '1.0-2' }}</dd>
-      <dt>Łatwość upraw</dt><dd>{{ selection().region.plantingEasiness | number: '1.0-2' }}</dd>
-    }
+@if (selection().place; as place) {
+  <header>
+    <strong>{{ place.name }}</strong>
+    <span class="subtitle">{{ getTypeLabel(place) }} · {{ selection().province.name }}</span>
+  </header>
+  <dl class="details">
+    <dt>Region</dt><dd>{{ selection().region.id }}</dd>
+  </dl>
+  @if (placeCharacteristics().length > 0) {
+    <ul class="traits">
+      @for (label of placeCharacteristics(); track label) {
+        <li>{{ label }}</li>
+      }
+    </ul>
   }
-</dl>
+} @else {
+  <header>
+    <strong>Region {{ selection().region.id }}</strong>
+    <span class="subtitle">{{ selection().province.name }}</span>
+  </header>
+  <dl class="details">
+    <dt>{{ characteristicLabels[characteristic()] }}</dt><dd>{{ value().row.label }}</dd>
+    @switch (characteristic()) {
+      @case (Characteristic.ENCHANT) {
+        <dt>Siła wpływu</dt><dd>{{ selection().region.enchantmentLevel | number: '1.0-2' }}</dd>
+      }
+      @case (Characteristic.SOIL) {
+        <dt>Żyzność</dt><dd>{{ selection().region.fertility | number: '1.0-2' }}</dd>
+        <dt>Łatwość upraw</dt><dd>{{ selection().region.plantingEasiness | number: '1.0-2' }}</dd>
+      }
+    }
+  </dl>
+}

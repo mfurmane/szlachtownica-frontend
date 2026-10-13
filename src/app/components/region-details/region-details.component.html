@@ -1,12 +1,36 @@
-<dl class="details">
-  <dt>Region</dt><dd>{{ region().id }}</dd>
-  @for (value of values(); track value.characteristic) {
-    <dt>{{ characteristicLabels[value.characteristic] }}</dt>
-    <dd><button (click)="characteristicSelected.emit(value)">{{ value.row.label }}</button></dd>
-  }
-  <dt>Siła wpływu</dt><dd>{{ region().enchantmentLevel | number: '1.0-2' }}</dd>
-  <dt>Żyzność</dt><dd>{{ region().fertility | number: '1.0-2' }}</dd>
-  <dt>Łatwość upraw</dt><dd>{{ region().plantingEasiness | number: '1.0-2' }}</dd>
-  <!-- na razie wszędzie ma wartość 1 - do odkomentowania, gdy to się zmieni -->
-  <!-- <dt>Łatwość hodowli</dt><dd>{{ region().farmingEasiness | number: '1.0-2' }}</dd> -->
-</dl>
+@if (selection().place; as place) {
+  <article class="card">
+    <header>
+      <h3>{{ place.name }}</h3>
+      <span class="subtitle">{{ getTypeLabel(place) }} · {{ selection().province.name }}</span>
+    </header>
+    <dl class="details">
+      <dt>Region</dt><dd>{{ selection().region.id }}</dd>
+    </dl>
+    @if (placeCharacteristics().length > 0) {
+      <ul class="traits">
+        @for (label of placeCharacteristics(); track label) {
+          <li>{{ label }}</li>
+        }
+      </ul>
+    }
+  </article>
+} @else {
+  <article class="card">
+    <header>
+      <h3>Region {{ selection().region.id }}</h3>
+      <span class="subtitle">Prowincja {{ selection().province.name }}</span>
+    </header>
+    <dl class="details">
+      @for (value of values(); track value.characteristic) {
+        <dt>{{ characteristicLabels[value.characteristic] }}</dt>
+        <dd><button (click)="characteristicSelected.emit(value)">{{ value.row.label }}</button></dd>
+      }
+      <dt>Siła wpływu</dt><dd>{{ selection().region.enchantmentLevel | number: '1.0-2' }}</dd>
+      <dt>Żyzność</dt><dd>{{ selection().region.fertility | number: '1.0-2' }}</dd>
+      <dt>Łatwość upraw</dt><dd>{{ selection().region.plantingEasiness | number: '1.0-2' }}</dd>
+      <!-- na razie wszędzie ma wartość 1 - do odkomentowania, gdy to się zmieni -->
+      <!-- <dt>Łatwość hodowli</dt><dd>{{ selection().region.farmingEasiness | number: '1.0-2' }}</dd> -->
+    </dl>
+  </article>
+}

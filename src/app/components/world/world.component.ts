@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, DestroyRef, ElementRef, OnInit, Signal, inject, viewChild } from '@angular/core';
-import { allRegions, Characteristic, Province, Region } from '../../shared/map';
+import { allPlaces, allRegions, Characteristic, ExtendedPlace, Place, Province, Region } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import type { Polygon } from 'geojson';
 import _ from 'lodash';
@@ -38,12 +38,15 @@ export class WorldComponent implements OnInit {
 
   readonly hovered$: Observable<MapSelection | undefined> = this.selectionService.hovered$;
   readonly mapSvg: Signal<ElementRef<SVGSVGElement>> = viewChild.required<ElementRef<SVGSVGElement>>('map');
+  readonly mapG: Signal<ElementRef<SVGGElement>> = viewChild.required<ElementRef<SVGGElement>>('mapG');
 
   paths: Map<number, string> = new Map<number, string>();
+  places: Array<ExtendedPlace> = [];
   provinces: Province[] = [];
   viewBox: ViewBox = { x: 0, y: 0, w: 100, h: 100 };
   currentColoring: Characteristic = Characteristic.REGION_TYPE;
   selectedRegion?: Region;
+  selectedPlace?: Place;
   cursorX: number = 0;
   cursorY: number = 0;
 
@@ -57,6 +60,7 @@ export class WorldComponent implements OnInit {
     this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data: Province[]) => {
         this.provinces = data;
+        this.places = allPlaces(data);
         this.paths = this.preparePaths(data);
         this.viewBox = this.computeViewBox(data);
       });
@@ -70,7 +74,13 @@ export class WorldComponent implements OnInit {
       });
     this.selectionService.selection$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((selection: MapSelection | undefined) => {
-        this.selectedRegion = selection?.region;
+        if (_.isNil(selection?.place)) {
+          this.selectedRegion = selection?.region;
+          this.selectedPlace = undefined;
+        } else {
+          this.selectedPlace = selection.place;
+          this.selectedRegion = undefined;
+        }
       });
   }
 
@@ -98,7 +108,15 @@ export class WorldComponent implements OnInit {
     this.selectionService.setHovered({ region, province });
   }
 
-  onRegionLeave(): void {
+  onPlaceClick(mapSelection: MapSelection): void {
+    this.selectionService.setSelection(mapSelection);
+  }
+
+  onPlaceEnter(extendedPlace: ExtendedPlace): void {
+    this.selectionService.setHovered(extendedPlace);
+  }
+
+  onElementLeave(): void {
     this.selectionService.clearHovered();
   }
 
@@ -106,16 +124,15 @@ export class WorldComponent implements OnInit {
     event.preventDefault();
 
     const svg: SVGSVGElement = this.mapSvg().nativeElement;
-    const ctm: DOMMatrix | null = svg.getScreenCTM();
-    if (_.isNil(ctm)) {
-      return;
-    }
 
     const zoomFactor: number = 1.1;
     const scale: number = event.deltaY > 0 ? zoomFactor : 1 / zoomFactor;
 
     // punkt mapy pod kursorem, we współrzędnych viewBoxa
-    const p: DOMPoint = new DOMPoint(event.clientX, event.clientY).matrixTransform(ctm.inverse());
+    const p: DOMPoint | undefined = this.toLocalPoint(event.clientX, event.clientY, svg);
+    if (_.isNil(p)) {
+      return;
+    }
 
     // ten punkt ma zostać pod kursorem po zmianie skali
     this.viewBox.x = p.x - (p.x - this.viewBox.x) * scale;
@@ -132,6 +149,30 @@ export class WorldComponent implements OnInit {
 
   endPan(): void {
     this.isPanning = false;
+  }
+
+  onMapClick(event: MouseEvent): void {
+    if (event.altKey) {
+      const g: SVGGElement = this.mapG().nativeElement;
+      const p: DOMPoint | undefined = this.toLocalPoint(event.clientX, event.clientY, g);
+      if (_.isNil(p)) {
+        return;
+      }
+      const coordinateText: string = `new Coordinate(${p.x}, ${p.y})`;
+      navigator.clipboard.writeText(coordinateText)
+        .catch(() => {
+          console.warn('Nie udało się skopiować koordynatów');
+        });
+      console.log(coordinateText);
+    }
+  }
+
+  private toLocalPoint(clientX: number, clientY: number, element: SVGGraphicsElement): DOMPoint | undefined {
+    const ctm: DOMMatrix | null = element.getScreenCTM();
+    if (_.isNil(ctm)) {
+      return undefined;
+    }
+    return new DOMPoint(clientX, clientY).matrixTransform(ctm.inverse());
   }
 
   private computeViewBox(provinces: Province[]): ViewBox {

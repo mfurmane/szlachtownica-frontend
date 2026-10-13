@@ -30,11 +30,25 @@ path:hover {
   100% { fill: black; fill-opacity: 1; }
 }
 
+@keyframes blink {
+  0%   { fill: white; fill-opacity: 1; }
+  100%  { fill-opacity: 0; }
+}
+
 path.selected {
   stroke: black;
   fill: white;
   stroke-width: 3;
   animation: pulse 1s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+circle.selected {
+  stroke: black;
+  fill: white;
+  stroke-width: 3.5;
+  r: 0.065;
+  animation: blink 1s ease-in-out infinite alternate;
   pointer-events: none;
 }
 

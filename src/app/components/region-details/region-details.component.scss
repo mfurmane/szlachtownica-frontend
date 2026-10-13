@@ -1,27 +1,39 @@
+@use '../../shared/cards' as *;
+
 :host {
   display: block;
 }
 
-.details {
-  display: grid;
-  // kolumna etykiet ma limit, żeby długa "Siła magicznego wpływu" nie zjadała miejsca na wartości
-  grid-template-columns: fit-content(42%) 1fr;
-  align-items: baseline;
-  gap: 4px 12px;
-  margin: 0;
+.card {
   padding: 10px 12px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
-dt {
-  color: var(--muted);
+header {
+  @include card-header;
+  margin-bottom: 8px;
+
+  .subtitle {
+    font-size: 12px;
+  }
 }
 
-dd {
-  margin: 0;
-  font-weight: 500;
+.details {
+  @include details-list;
+  // kolumna etykiet ma limit, żeby długa "Siła magicznego wpływu" nie zjadała miejsca na wartości
+  grid-template-columns: fit-content(42%) 1fr;
+  gap: 4px 12px;
+}
+
+// Karta ma tło --bg, więc etykiety dostają tło karty z dymka, żeby nie zlały się z kartą
+.traits {
+  @include traits;
+
+  li {
+    background: var(--surface);
+  }
 }
 
 // Klikalne wartości mają wyglądać jak tekst z kropkowanym podkreśleniem, a nie jak przyciski z formularza.

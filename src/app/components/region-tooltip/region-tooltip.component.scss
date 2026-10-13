@@ -1,6 +1,8 @@
+@use '../../shared/cards' as *;
+
 :host {
   display: block;
-  padding: 6px 10px;
+  padding: 6px 10px 8px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -9,18 +11,23 @@
   white-space: nowrap;
 }
 
+header {
+  @include card-header;
+
+  strong {
+    font-size: 13px;
+  }
+}
+
 .details {
-  display: grid;
-  grid-template-columns: auto auto;
+  @include details-list;
+  // wartość zaraz za etykietą, a nie przy prawej krawędzi, gdy nagłówek albo etykiety są szersze
+  grid-template-columns: max-content 1fr;
   gap: 2px 10px;
-  margin: 0;
 }
 
-dt {
-  color: var(--muted);
-}
-
-dd {
-  margin: 0;
-  font-weight: 500;
+// Dymek ma szerokość treści, więc bez limitu etykiety ułożyłyby się w jeden długi wiersz
+.traits {
+  @include traits;
+  max-width: 250px;
 }

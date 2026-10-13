@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Province, Region } from '../shared/map';
+import { Place, Province, Region } from '../shared/map';
 
 export interface MapSelection {
   region: Region;
   province: Province;
+  place?: Place;
 }
 
 @Injectable({
