@@ -42,7 +42,7 @@ export class WorldComponent implements OnInit {
 
   paths: Map<number, string> = new Map<number, string>();
   places: Array<ExtendedPlace> = [];
-  provinces: Province[] = [];
+  provinces: Array<Province> = [];
   viewBox: ViewBox = { x: 0, y: 0, w: 100, h: 100 };
   currentColoring: Characteristic = Characteristic.REGION_TYPE;
   selectedRegion?: Region;
@@ -58,7 +58,7 @@ export class WorldComponent implements OnInit {
 
   ngOnInit(): void {
     this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data: Province[]) => {
+      .subscribe((data: Array<Province>) => {
         this.provinces = data;
         this.places = allPlaces(data);
         this.paths = this.preparePaths(data);
@@ -175,13 +175,13 @@ export class WorldComponent implements OnInit {
     return new DOMPoint(clientX, clientY).matrixTransform(ctm.inverse());
   }
 
-  private computeViewBox(provinces: Province[]): ViewBox {
-    const points: number[][] = provinces.flatMap((p: Province) =>
+  private computeViewBox(provinces: Array<Province>): ViewBox {
+    const points: Array<Array<number>> = provinces.flatMap((p: Province) =>
       p.area.coordinates.flat()
     );
 
-    const xs: number[] = points.map((p: number[]) => p[0]);
-    const ys: number[] = points.map((p: number[]) => p[1]);
+    const xs: Array<number> = points.map((p: Array<number>) => p[0]);
+    const ys: Array<number> = points.map((p: Array<number>) => p[1]);
 
     const minX: number = Math.min(...xs);
     const maxX: number = Math.max(...xs);
@@ -221,8 +221,8 @@ export class WorldComponent implements OnInit {
   private toPath(geometry: Polygon): string {
     if (geometry.type === 'Polygon') {
       return geometry.coordinates
-        .map((ring: number[][]) =>
-          ring.map((point: number[], i: number) =>
+        .map((ring: Array<Array<number>>) =>
+          ring.map((point: Array<number>, i: number) =>
             (i === 0 ? 'M' : 'L') + point[0] + ' ' + (point[1])
           ).join(' ') + ' Z'
         )
@@ -237,7 +237,7 @@ export class WorldComponent implements OnInit {
     this.cursorY = e.clientY - rect.top;
   }
 
-  private preparePaths(provinces: Province[]): Map<number, string> {
+  private preparePaths(provinces: Array<Province>): Map<number, string> {
     const result: Map<number, string> = new Map<number, string>();
     allRegions(provinces).forEach((region: Region) => {
       result.set(region.id, this.toPath(region.area));

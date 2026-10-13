@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { debounceTime, distinctUntilChanged, map, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Observable, of, Subject, switchMap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { ResultType, SearchResult } from '../../shared/search';
 import { SearchService } from '../../services/search.service';
@@ -27,14 +27,13 @@ export class SearchComponent {
     debounceTime(300),
     map((query: string) => query.trim().toLowerCase()),
     distinctUntilChanged(),
-    map((query: string) => {
+    switchMap((query: string) => {
       if (query.length > 1) {
         return this.searchService.search(query);
       } else {
-        return undefined;
+        return of(undefined);
       }
-    }
-  ));
+    }));
 
   handleQuery(query: string): void {
     this.textSubject.next(query);

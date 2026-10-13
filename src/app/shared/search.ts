@@ -13,9 +13,9 @@ export enum ResultType {
 }
 
 export function placeResult(place: ExtendedPlace): SearchResult {
-  return {type: ResultType.PLACE, identifier: ResultType.PLACE + place.place.id, place};
+  return { type: ResultType.PLACE, identifier: ResultType.PLACE + place.place.id, place };
 }
 
 export function provinceResult(province: Province): SearchResult {
-  return {type: ResultType.PROVINCE, identifier: ResultType.PROVINCE + province.id, province};
+  return { type: ResultType.PROVINCE, identifier: ResultType.PROVINCE + province.id, province };
 }

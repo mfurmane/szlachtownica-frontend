@@ -4,20 +4,20 @@ export interface Province {
   id: number;
   name: string;
   area: Polygon;
-  subProvinces: SubProvince[];
+  subProvinces: Array<SubProvince>;
 }
 
 export interface SubProvince {
   id: number;
   area: Polygon;
   provinces: Province;
-  regions: Region[];
+  regions: Array<Region>;
 }
 
 export interface Region {
   id: number;
   area: Polygon;
-  places: Place[];
+  places: Array<Place>;
 
   humidity: Humidity;
   climate: Climate;

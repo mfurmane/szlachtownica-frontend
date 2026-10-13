@@ -49,6 +49,8 @@
   }
 }
 
+// Klikalne wartości mają wyglądać jak tekst z kropkowanym podkreśleniem, a nie jak przyciski z formularza.
+// Ujemny margines wyrównuje tekst z wartościami, które przyciskami nie są.
 @mixin text-button {
   padding: 1px 4px;
   margin: -1px 0 -1px -4px;

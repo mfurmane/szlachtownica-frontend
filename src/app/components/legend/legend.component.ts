@@ -31,7 +31,7 @@ export class LegendComponent implements OnInit {
       this.highlighted = highlighted;
     });
     this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((provinces: Province[]) => {
+      .subscribe((provinces: Array<Province>) => {
         const regions: Array<Region> = allRegions(provinces);
         this.regionCounts = this.countRegions(regions);
       });

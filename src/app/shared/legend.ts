@@ -20,7 +20,7 @@ export interface LegendRow {
 }
 
 export interface LegendCategory {
-  readonly rows: readonly LegendRow[];
+  readonly rows: ReadonlyArray<LegendRow>;
   readonly valuePicker: (region: Region) => string;
   readonly colorPicker: (region: Region) => string;
 }
@@ -40,7 +40,7 @@ export function regionAsCharacteristicSelection(characteristic: Characteristic, 
 }
 
 function buildCategory<T extends string>(
-  values: T[],
+  values: Array<T>,
   labels: Record<T, string>,
   colors: Record<T, string>,
   picker: (region: Region) => T

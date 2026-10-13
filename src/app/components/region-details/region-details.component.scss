@@ -36,8 +36,6 @@ header {
   }
 }
 
-// Klikalne wartości mają wyglądać jak tekst z kropkowanym podkreśleniem, a nie jak przyciski z formularza.
-// Ujemny margines wyrównuje tekst z wartościami, które przyciskami nie są.
 dd button {
   @include text-button;
 }

@@ -9,12 +9,12 @@ import { HttpClient } from '@angular/common/http';
 export class WorldStateService {
 
   private readonly http: HttpClient = inject(HttpClient);
-  private readonly provincesSubject: ReplaySubject<Province[]> = new ReplaySubject<Province[]>(1);
-  readonly provinces$: Observable<Province[]> = this.provincesSubject.asObservable();
+  private readonly provincesSubject: ReplaySubject<Array<Province>> = new ReplaySubject<Array<Province>>(1);
+  readonly provinces$: Observable<Array<Province>> = this.provincesSubject.asObservable();
 
   constructor() {
-    this.http.get<Province[]>('http://localhost:8080/world/provinces/all')
-      .subscribe((data: Province[]) => {
+    this.http.get<Array<Province>>('http://localhost:8080/world/provinces/all')
+      .subscribe((data: Array<Province>) => {
         this.provincesSubject.next(data);
       });
   }
