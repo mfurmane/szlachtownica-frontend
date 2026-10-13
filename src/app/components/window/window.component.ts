@@ -5,11 +5,12 @@ import { CharacteristicSelection } from '../../shared/legend';
 import { ColoringStrategyService } from '../../services/coloring-strategy.service';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { SearchComponent } from '../search/search.component';
 
 @Component({
   selector: 'app-window',
   standalone: true,
-  imports: [RegionDetailsComponent, AsyncPipe],
+  imports: [RegionDetailsComponent, AsyncPipe, SearchComponent],
   templateUrl: './window.component.html',
   styleUrl: './window.component.scss'
 })

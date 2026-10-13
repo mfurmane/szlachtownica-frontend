@@ -48,3 +48,23 @@
     border-radius: 999px;
   }
 }
+
+@mixin text-button {
+  padding: 1px 4px;
+  margin: -1px 0 -1px -4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  text-align: left;
+  text-decoration: underline dotted var(--muted);
+  text-underline-offset: 3px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+}

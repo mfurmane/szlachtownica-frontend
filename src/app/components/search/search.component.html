@@ -1,0 +1,21 @@
+<input #query placeholder="Wyszukaj" type="search" (input)="handleQuery(query.value)">
+@if (results$ | async; as results) {
+  <ul>
+    @for (result of results; track result.identifier) {
+      @switch (result.type) {
+        @case (ResultType.PLACE) {
+          @if (result.place; as place) {
+            <li><button (click)="showPlace(place)">{{place.place.name}} ({{getTypeLabel(place.place)}})</button></li>
+          }
+        }
+        @case (ResultType.PROVINCE) {
+          @if (result.province; as province) {
+            <li><button (click)="showProvince(province)">{{province.name}} (Prowincja)</button></li>
+          }
+        }
+      }
+    } @empty {
+      <li>Brak wyników</li>
+    }
+  </ul>
+}
