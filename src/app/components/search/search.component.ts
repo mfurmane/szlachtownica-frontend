@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { debounceTime, distinctUntilChanged, map, Observable, of, Subject, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { ResultType, SearchResult } from '../../shared/search';
 import { SearchService } from '../../services/search.service';
@@ -19,24 +19,13 @@ export class SearchComponent {
   readonly ResultType: typeof ResultType = ResultType;
   readonly getTypeLabel: (place: Place) => string = getTypeLabel;
 
-  private readonly textSubject: Subject<string> = new Subject<string>();
   private readonly searchService: SearchService = inject(SearchService);
+  readonly results$: Observable<Array<SearchResult> | undefined> = this.searchService.results$;
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
 
-  readonly results$: Observable<Array<SearchResult> | undefined> = this.textSubject.pipe(
-    debounceTime(300),
-    map((query: string) => query.trim().toLowerCase()),
-    distinctUntilChanged(),
-    switchMap((query: string) => {
-      if (query.length > 1) {
-        return this.searchService.search(query);
-      } else {
-        return of(undefined);
-      }
-    }));
 
   handleQuery(query: string): void {
-    this.textSubject.next(query);
+    this.searchService.setText(query);
   }
 
   showProvince(province: Province): void {

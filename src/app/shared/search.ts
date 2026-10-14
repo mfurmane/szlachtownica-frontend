@@ -1,4 +1,6 @@
+import { map, OperatorFunction } from 'rxjs';
 import { ExtendedPlace, Province } from './map';
+import _ from 'lodash';
 
 export interface SearchResult {
   type: ResultType;
@@ -18,4 +20,13 @@ export function placeResult(place: ExtendedPlace): SearchResult {
 
 export function provinceResult(province: Province): SearchResult {
   return { type: ResultType.PROVINCE, identifier: ResultType.PROVINCE + province.id, province };
+}
+
+export function onlyType(type: ResultType): OperatorFunction<Array<SearchResult> | undefined, Array<SearchResult>> {
+  return map((values: Array<SearchResult> | undefined) => {
+    if (_.isNil(values)) {
+      return [];
+    }
+    return values.filter((value: SearchResult) => value.type === type);
+  });
 }

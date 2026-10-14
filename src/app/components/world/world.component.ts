@@ -3,15 +3,17 @@ import { Component, DestroyRef, ElementRef, OnInit, Signal, inject, viewChild } 
 import { allPlaces, allRegions, Characteristic, ExtendedPlace, Place, Province, Region } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import type { Polygon } from 'geojson';
-import _ from 'lodash';
 import { ColoringStrategyService } from '../../services/coloring-strategy.service';
 import { LegendRow, LEGENDS } from '../../shared/legend';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WorldStateService } from '../../services/world-state.service';
 import { LegendComponent } from '../legend/legend.component';
 import { ColoringModesComponent } from '../coloring-modes/coloring-modes.component';
-import { Observable } from 'rxjs';
+import { delay, Observable, of, switchMap } from 'rxjs';
 import { RegionTooltipComponent } from '../region-tooltip/region-tooltip.component';
+import _ from 'lodash';
+import { onlyType, ResultType, SearchResult } from '../../shared/search';
+import { SearchService } from '../../services/search.service';
 
 interface ViewBox {
   x: number;
@@ -32,15 +34,28 @@ export class WorldComponent implements OnInit {
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
   private readonly coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
+  private readonly searchService: SearchService = inject(SearchService);
 
   private readonly highlightedColor: string = '#ffff00';
   private readonly unhighlightedColor: string = '#292918';
+  private readonly tooltipDelayMs: number = 500;
 
-  readonly hovered$: Observable<MapSelection | undefined> = this.selectionService.hovered$;
+  readonly ResultType: typeof ResultType = ResultType;
+  readonly placeResults$: Observable<Array<SearchResult>> = this.searchService.results$.pipe(onlyType(ResultType.PLACE));
+  readonly provinceResults$: Observable<Array<SearchResult>> = this.searchService.results$.pipe(onlyType(ResultType.PROVINCE));
+
+  readonly hovered$: Observable<MapSelection | undefined> = this.selectionService.hovered$.pipe(
+    switchMap((value: MapSelection | undefined) => {
+      if (_.isNil(value)) {
+        return of(undefined);
+      }
+      return of(value).pipe(delay(this.tooltipDelayMs));
+    }));
   readonly mapSvg: Signal<ElementRef<SVGSVGElement>> = viewChild.required<ElementRef<SVGSVGElement>>('map');
   readonly mapG: Signal<ElementRef<SVGGElement>> = viewChild.required<ElementRef<SVGGElement>>('mapG');
 
   paths: Map<number, string> = new Map<number, string>();
+  provincePaths: Map<number, string> = new Map<number, string>();
   places: Array<ExtendedPlace> = [];
   provinces: Array<Province> = [];
   viewBox: ViewBox = { x: 0, y: 0, w: 100, h: 100 };
@@ -62,6 +77,7 @@ export class WorldComponent implements OnInit {
         this.provinces = data;
         this.places = allPlaces(data);
         this.paths = this.preparePaths(data);
+        this.provincePaths = this.prepareProvincePaths(data);
         this.viewBox = this.computeViewBox(data);
       });
     this.coloringStrategyService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef))
@@ -241,6 +257,14 @@ export class WorldComponent implements OnInit {
     const result: Map<number, string> = new Map<number, string>();
     allRegions(provinces).forEach((region: Region) => {
       result.set(region.id, this.toPath(region.area));
+    });
+    return result;
+  }
+
+  private prepareProvincePaths(provinces: Array<Province>): Map<number, string> {
+    const result: Map<number, string> = new Map<number, string>();
+    provinces.forEach((province: Province) => {
+      result.set(province.id, this.toPath(province.area));
     });
     return result;
   }

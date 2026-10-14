@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { placeResult, provinceResult, SearchResult } from '../shared/search';
 import { WorldStateService } from './world-state.service';
-import { map, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap } from 'rxjs';
 import { allPlaces, ExtendedPlace, Province } from '../shared/map';
 import { getPlaceCharacteristicLabels } from '../shared/places-data';
 
@@ -12,8 +12,26 @@ export class SearchService {
 
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
   private readonly provinces$: Observable<Array<Province>> = this.worldStateService.provinces$;
+  private readonly textSubject: Subject<string> = new Subject<string>();
 
-  search(query: string): Observable<Array<SearchResult>> {
+  readonly results$: Observable<Array<SearchResult> | undefined> = this.textSubject.pipe(
+    debounceTime(300),
+    map((query: string) => query.trim().toLowerCase()),
+    distinctUntilChanged(),
+    switchMap((query: string) => {
+      if (query.length > 1) {
+        return this.search(query);
+      } else {
+        return of(undefined);
+      }
+    }),
+    shareReplay(1));
+
+  setText(value: string): void {
+    this.textSubject.next(value);
+  }
+
+  private search(query: string): Observable<Array<SearchResult>> {
     return this.provinces$.pipe(map((provinces: Array<Province>) => {
       const placeResults = allPlaces(provinces)
         .filter((place: ExtendedPlace) => this.placeFitsQuery(place, query))

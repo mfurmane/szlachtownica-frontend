@@ -32,6 +32,18 @@
         }
       }
     }
+    @if (provinceResults$ | async; as results) {
+      @for (result of results; track result.identifier) {
+        @if (result.province; as province) {
+          <path class="search-hit"
+            [attr.d]="provincePaths.get(province.id)"
+            vector-effect="non-scaling-stroke"
+            stroke-linejoin="round"
+            stroke-linecap="round">
+          </path>
+        }
+      }
+    }
     @if (selectedRegion) {
       <path class="selected"
         [attr.d]="paths.get(selectedRegion.id)"
@@ -58,6 +70,16 @@
         [attr.cx]="selectedPlace.location.coordinates[0]"
         [attr.cy]="selectedPlace.location.coordinates[1]"
         vector-effect="non-scaling-stroke"/>
+    }
+    @if (placeResults$ | async; as results) {
+      @for (result of results; track result.identifier) {
+        @if (result.place; as place) {
+          <circle class="search-hit"
+            [attr.cx]="place.place.location.coordinates[0]"
+            [attr.cy]="place.place.location.coordinates[1]"
+            vector-effect="non-scaling-stroke"/>
+        }
+      }
     }
   </g>
 </svg>
