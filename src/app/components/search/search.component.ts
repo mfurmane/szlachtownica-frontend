@@ -22,6 +22,7 @@ export class SearchComponent {
   private readonly searchService: SearchService = inject(SearchService);
   readonly results$: Observable<Array<SearchResult> | undefined> = this.searchService.results$;
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
+  readonly text$: Observable<string> = this.searchService.text$;
 
   handleQuery(query: string): void {
     this.searchService.setText(query);

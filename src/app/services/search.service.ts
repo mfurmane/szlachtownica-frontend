@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { placeResult, provinceResult, SearchResult } from '../shared/search';
 import { WorldStateService } from './world-state.service';
-import { debounceTime, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { allPlaces, ExtendedPlace, Province } from '../shared/map';
 import { getPlaceCharacteristicLabels } from '../shared/places-data';
 
@@ -12,7 +12,8 @@ export class SearchService {
 
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
   private readonly provinces$: Observable<Array<Province>> = this.worldStateService.provinces$;
-  private readonly textSubject: Subject<string> = new Subject<string>();
+  private readonly textSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  readonly text$: Observable<string> = this.textSubject.asObservable();
 
   readonly results$: Observable<Array<SearchResult> | undefined> = this.textSubject.pipe(
     debounceTime(300),
@@ -29,6 +30,10 @@ export class SearchService {
 
   setText(value: string): void {
     this.textSubject.next(value);
+  }
+
+  clear(): void {
+    this.textSubject.next('');
   }
 
   private search(query: string): Observable<Array<SearchResult>> {
