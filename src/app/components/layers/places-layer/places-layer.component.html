@@ -1,0 +1,8 @@
+@for (extendedPlace of places(); track extendedPlace.place.id) {
+  <svg:circle
+    [attr.cx]="extendedPlace.place.location.coordinates[0]"
+    [attr.cy]="extendedPlace.place.location.coordinates[1]"
+    (mouseenter)="onPlaceEnter(extendedPlace)"
+    (mouseleave)="onElementLeave()"
+    (click)="onPlaceClick(extendedPlace)"/>
+}

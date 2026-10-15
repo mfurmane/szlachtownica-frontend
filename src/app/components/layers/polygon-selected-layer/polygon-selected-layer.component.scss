@@ -1,0 +1,19 @@
+:host {
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%   { fill: white; fill-opacity: 1; }
+  40%  { fill-opacity: 0; }
+  60%  { fill-opacity: 0; }
+  100% { fill: black; fill-opacity: 1; }
+}
+
+path {
+  stroke: black;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  animation: pulse 1s ease-in-out infinite alternate;
+}

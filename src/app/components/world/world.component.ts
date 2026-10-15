@@ -1,10 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, DestroyRef, ElementRef, OnInit, Signal, inject, viewChild } from '@angular/core';
-import { allPlaces, allRegions, Characteristic, ExtendedPlace, Place, Province, Region } from '../../shared/map';
+import { Characteristic, Province } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
-import type { Polygon } from 'geojson';
 import { ColoringStrategyService } from '../../services/coloring-strategy.service';
-import { LegendRow, LEGENDS } from '../../shared/legend';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WorldStateService } from '../../services/world-state.service';
 import { LegendComponent } from '../legend/legend.component';
@@ -12,8 +10,12 @@ import { ColoringModesComponent } from '../coloring-modes/coloring-modes.compone
 import { delay, Observable, of, switchMap } from 'rxjs';
 import { RegionTooltipComponent } from '../region-tooltip/region-tooltip.component';
 import _ from 'lodash';
-import { onlyType, ResultType, SearchResult } from '../../shared/search';
-import { SearchService } from '../../services/search.service';
+import { PointSearchLayerComponent } from '../layers/point-search-layer/point-search-layer.component';
+import { PointSelectedLayerComponent } from '../layers/point-selected-layer/point-selected-layer.component';
+import { PolygonSearchLayerComponent } from '../layers/polygon-search-layer/polygon-search-layer.component';
+import { PolygonSelectedLayerComponent } from '../layers/polygon-selected-layer/polygon-selected-layer.component';
+import { RegionsLayerComponent } from '../layers/regions-layer/regions-layer.component';
+import { PlacesLayerComponent } from '../layers/places-layer/places-layer.component';
 
 interface ViewBox {
   x: number;
@@ -25,7 +27,8 @@ interface ViewBox {
 @Component({
   selector: 'app-world',
   standalone: true,
-  imports: [LegendComponent, ColoringModesComponent, RegionTooltipComponent, AsyncPipe],
+  imports: [LegendComponent, ColoringModesComponent, RegionTooltipComponent, AsyncPipe, PointSearchLayerComponent,
+    PointSelectedLayerComponent, PolygonSearchLayerComponent, PolygonSelectedLayerComponent, RegionsLayerComponent, PlacesLayerComponent],
   templateUrl: './world.component.html',
   styleUrl: './world.component.scss'
 })
@@ -34,15 +37,8 @@ export class WorldComponent implements OnInit {
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
   private readonly coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
-  private readonly searchService: SearchService = inject(SearchService);
 
-  private readonly highlightedColor: string = '#ffff00';
-  private readonly unhighlightedColor: string = '#292918';
   private readonly tooltipDelayMs: number = 500;
-
-  readonly ResultType: typeof ResultType = ResultType;
-  readonly placeResults$: Observable<Array<SearchResult>> = this.searchService.results$.pipe(onlyType(ResultType.PLACE));
-  readonly provinceResults$: Observable<Array<SearchResult>> = this.searchService.results$.pipe(onlyType(ResultType.PROVINCE));
 
   readonly hovered$: Observable<MapSelection | undefined> = this.selectionService.hovered$.pipe(
     switchMap((value: MapSelection | undefined) => {
@@ -54,18 +50,10 @@ export class WorldComponent implements OnInit {
   readonly mapSvg: Signal<ElementRef<SVGSVGElement>> = viewChild.required<ElementRef<SVGSVGElement>>('map');
   readonly mapG: Signal<ElementRef<SVGGElement>> = viewChild.required<ElementRef<SVGGElement>>('mapG');
 
-  paths: Map<number, string> = new Map<number, string>();
-  provincePaths: Map<number, string> = new Map<number, string>();
-  places: Array<ExtendedPlace> = [];
-  provinces: Array<Province> = [];
   viewBox: ViewBox = { x: 0, y: 0, w: 100, h: 100 };
   currentColoring: Characteristic = Characteristic.REGION_TYPE;
-  selectedRegion?: Region;
-  selectedPlace?: Place;
   cursorX: number = 0;
   cursorY: number = 0;
-
-  private highlighted?: LegendRow;
 
   private isPanning: boolean = false;
   private lastX: number = 0;
@@ -74,66 +62,17 @@ export class WorldComponent implements OnInit {
   ngOnInit(): void {
     this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data: Array<Province>) => {
-        this.provinces = data;
-        this.places = allPlaces(data);
-        this.paths = this.preparePaths(data);
-        this.provincePaths = this.prepareProvincePaths(data);
         this.viewBox = this.computeViewBox(data);
       });
     this.coloringStrategyService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((currentColoring: Characteristic) => {
         this.currentColoring = currentColoring;
       });
-    this.coloringStrategyService.highlightedCategory$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((highlighted: LegendRow | undefined) => {
-        this.highlighted = highlighted;
-      });
-    this.selectionService.selection$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((selection: MapSelection | undefined) => {
-        if (_.isNil(selection?.place)) {
-          this.selectedRegion = selection?.region;
-          this.selectedPlace = undefined;
-        } else {
-          this.selectedPlace = selection.place;
-          this.selectedRegion = undefined;
-        }
-      });
   }
 
   onMouseMove(e: MouseEvent): void {
     this.rememberCursorPosition(e);
     this.pan(e);
-  }
-
-  getColor(region: Region): string {
-    if (!_.isNil(this.highlighted)) {
-      if (this.highlighted.matches(region)) {
-        return this.highlightedColor;
-      } else {
-        return this.unhighlightedColor;
-      }
-    }
-    return LEGENDS[this.currentColoring].colorPicker(region);
-  }
-
-  onRegionClick(region: Region, province: Province): void {
-    this.selectionService.setSelection({ region, province });
-  }
-
-  onRegionEnter(region: Region, province: Province): void {
-    this.selectionService.setHovered({ region, province });
-  }
-
-  onPlaceClick(mapSelection: MapSelection): void {
-    this.selectionService.setSelection(mapSelection);
-  }
-
-  onPlaceEnter(extendedPlace: ExtendedPlace): void {
-    this.selectionService.setHovered(extendedPlace);
-  }
-
-  onElementLeave(): void {
-    this.selectionService.clearHovered();
   }
 
   onWheel(event: WheelEvent): void {
@@ -234,38 +173,9 @@ export class WorldComponent implements OnInit {
     this.lastY = e.clientY;
   }
 
-  private toPath(geometry: Polygon): string {
-    if (geometry.type === 'Polygon') {
-      return geometry.coordinates
-        .map((ring: Array<Array<number>>) =>
-          ring.map((point: Array<number>, i: number) =>
-            (i === 0 ? 'M' : 'L') + point[0] + ' ' + (point[1])
-          ).join(' ') + ' Z'
-        )
-        .join(' ');
-    }
-    return '';
-  }
-
   private rememberCursorPosition(e: MouseEvent): void {
     const rect: DOMRect = this.mapSvg().nativeElement.getBoundingClientRect();
     this.cursorX = e.clientX - rect.left;
     this.cursorY = e.clientY - rect.top;
-  }
-
-  private preparePaths(provinces: Array<Province>): Map<number, string> {
-    const result: Map<number, string> = new Map<number, string>();
-    allRegions(provinces).forEach((region: Region) => {
-      result.set(region.id, this.toPath(region.area));
-    });
-    return result;
-  }
-
-  private prepareProvincePaths(provinces: Array<Province>): Map<number, string> {
-    const result: Map<number, string> = new Map<number, string>();
-    provinces.forEach((province: Province) => {
-      result.set(province.id, this.toPath(province.area));
-    });
-    return result;
   }
 }

@@ -1,0 +1,22 @@
+:host {
+  pointer-events: none;
+}
+
+@keyframes search {
+  0% {
+    fill: yellow;
+    fill-opacity: 0.4;
+  }
+
+  100% {
+    fill-opacity: 0;
+  }
+}
+
+circle {
+  stroke: black;
+  fill: yellow;
+  stroke-width: 3.5;
+  r: 0.1;
+  animation: search 1s ease-in-out infinite alternate;
+}

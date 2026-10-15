@@ -1,5 +1,5 @@
 import { Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
-import { Characteristic, Place, PlaceCharacteristic, Region } from '../../shared/map';
+import { Characteristic, Place } from '../../shared/map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
 import { DecimalPipe } from '@angular/common';
 import { MapSelection } from '../../services/map-selection.service';

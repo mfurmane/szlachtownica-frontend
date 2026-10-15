@@ -1,0 +1,7 @@
+@if (provinceResults$ | async; as results) {
+  @for (result of results; track result.province.id) {
+    <svg:path
+      [attr.d]="result.path">
+    </path>
+  }
+}

@@ -1,0 +1,18 @@
+@for (province of provinces(); track province.id) {
+  @for (subprovince of province.subProvinces; track subprovince.id) {
+    @for (region of subprovince.regions; track region.id) {
+      <svg:path
+        [attr.d]="paths().get(region.id)"
+        [attr.fill]="colorFunction()(region)"
+        stroke="black"
+        vector-effect="non-scaling-stroke"
+        stroke-width="1.4"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        (click)="onRegionClick(region, province)"
+        (mouseenter)="onRegionEnter(region, province)"
+        (mouseleave)="onElementLeave()">
+      </path>
+    }
+  }
+}

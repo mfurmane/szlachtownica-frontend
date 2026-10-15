@@ -1,0 +1,8 @@
+@if (selection$ | async; as selection) {
+  @if (selection.place; as place) {
+    <svg:circle
+      [attr.cx]="place.location.coordinates[0]"
+      [attr.cy]="place.location.coordinates[1]"
+      vector-effect="non-scaling-stroke"/>
+  }
+}

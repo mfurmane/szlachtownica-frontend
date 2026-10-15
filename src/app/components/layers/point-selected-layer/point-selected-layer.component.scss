@@ -1,0 +1,21 @@
+:host {
+  pointer-events: none;
+}
+
+@keyframes blink {
+  0% {
+    fill: white;
+    fill-opacity: 1;
+  }
+
+  100% {
+    fill-opacity: 0;
+  }
+}
+
+circle {
+  stroke: black;
+  stroke-width: 3.5;
+  r: 0.065;
+  animation: blink 1s ease-in-out infinite alternate;
+}

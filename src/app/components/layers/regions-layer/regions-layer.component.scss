@@ -1,0 +1,11 @@
+path {
+  stroke: black;
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+path:hover {
+  filter: brightness(1.2);
+}

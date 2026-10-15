@@ -1,0 +1,11 @@
+circle {
+  stroke: black;
+  fill: red;
+  stroke-width: 2.4;
+  r: 0.05;
+  vector-effect: non-scaling-stroke;
+}
+
+circle:hover {
+  fill: yellow;
+}

@@ -1,0 +1,17 @@
+:host {
+  pointer-events: none;
+}
+
+@keyframes search {
+  0%   { fill: yellow; fill-opacity: 0.4; }
+  100%  { fill-opacity: 0; }
+}
+
+path {
+  stroke: black;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  animation: search 1s ease-in-out infinite alternate;
+}

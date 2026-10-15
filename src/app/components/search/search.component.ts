@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { debounceTime, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { ResultType, SearchResult } from '../../shared/search';
 import { SearchService } from '../../services/search.service';
@@ -23,14 +23,12 @@ export class SearchComponent {
   readonly results$: Observable<Array<SearchResult> | undefined> = this.searchService.results$;
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
 
-
   handleQuery(query: string): void {
     this.searchService.setText(query);
   }
 
   showProvince(province: Province): void {
     //TODO
-    console.log(province);
   }
 
   showPlace(place: ExtendedPlace): void {

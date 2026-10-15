@@ -1,0 +1,10 @@
+@if (results$ | async; as results) {
+  @for (result of results; track result.identifier) {
+    @if (result.place; as place) {
+      <svg:circle
+        [attr.cx]="place.place.location.coordinates[0]"
+        [attr.cy]="place.place.location.coordinates[1]"
+        vector-effect="non-scaling-stroke"/>
+    }
+  }
+}
