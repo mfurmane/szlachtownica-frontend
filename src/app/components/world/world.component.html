@@ -2,32 +2,36 @@
   <app-coloring-modes></app-coloring-modes>
 </div>
 
-<svg #map
-  width="100%"
-  height="90%"
-  [attr.viewBox]="viewBox.x + ' ' + viewBox.y + ' ' + viewBox.w + ' ' + viewBox.h"
-  (wheel)="onWheel($event)"
-  (mousedown)="startPan($event)"
-  (mousemove)="onMouseMove($event)"
-  (mouseup)="endPan()"
-  (mouseleave)="endPan()"
-  (click)="onMapClick($event)"
->
-  <g transform="scale(1,-1)" #mapG>
-    <g appRegionsLayer></g>
-    <g appPolygonSearchLayer></g>
-    <g appPolygonSelectedLayer></g>
-    <g appPlacesLayer></g>
-    <g appPointSearchLayer></g>
-    <g appPointSelectedLayer></g>
-  </g>
-</svg>
+<!-- ramka nie rusza się przy przeciąganiu; przesuwa się tylko svg w jej środku -->
+<div class="map-frame">
+  <svg #map
+    width="100%"
+    height="90%"
+    [attr.viewBox]="viewBox.x + ' ' + viewBox.y + ' ' + viewBox.w + ' ' + viewBox.h"
+    [style.transform]="panTransform"
+    (wheel)="onWheel($event)"
+    (mousedown)="startPan($event)"
+    (mousemove)="onMouseMove($event)"
+    (mouseup)="endPan()"
+    (mouseleave)="endPan()"
+    (click)="onMapClick($event)"
+  >
+    <g transform="scale(1,-1)" #mapG>
+      <g appRegionsLayer></g>
+      <g appPolygonSearchLayer></g>
+      <g appPolygonSelectedLayer></g>
+      <g appPlacesLayer></g>
+      <g appPointSearchLayer></g>
+      <g appPointSelectedLayer></g>
+    </g>
+  </svg>
+</div>
 
 <div class="legend-overlay">
   <app-legend></app-legend>
 </div>
 
-@if (hovered$ | async; as hovered) {
+@if (tooltipTarget$ | async; as hovered) {
   <app-region-tooltip
     class="tooltip"
     [selection]="hovered"

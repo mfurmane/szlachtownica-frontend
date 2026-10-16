@@ -1,13 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, DestroyRef, ElementRef, OnInit, Signal, inject, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, Signal, computed, inject, viewChild } from '@angular/core';
 import { Characteristic, Province } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import { ColoringStrategyService } from '../../services/coloring-strategy.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { WorldStateService } from '../../services/world-state.service';
 import { LegendComponent } from '../legend/legend.component';
 import { ColoringModesComponent } from '../coloring-modes/coloring-modes.component';
-import { delay, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, delay, map, Observable, of, Subject, switchMap } from 'rxjs';
 import { RegionTooltipComponent } from '../region-tooltip/region-tooltip.component';
 import _ from 'lodash';
 import { PointSearchLayerComponent } from '../layers/point-search-layer/point-search-layer.component';
@@ -40,13 +40,17 @@ export class WorldComponent implements OnInit {
 
   private readonly tooltipDelayMs: number = 500;
 
-  readonly hovered$: Observable<MapSelection | undefined> = this.selectionService.hovered$.pipe(
-    switchMap((value: MapSelection | undefined) => {
-      if (_.isNil(value)) {
+  private readonly panningSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private readonly panning$: Observable<boolean> = this.panningSubject.asObservable();
+  readonly isPanning: Signal<boolean> = toSignal(this.panning$, { requireSync: true });
+  readonly tooltipTarget$: Observable<MapSelection | undefined> = combineLatest([this.panning$, this.selectionService.hovered$]).pipe(
+    switchMap(([panning, hovered]: [boolean, MapSelection | undefined]) => {
+      if (_.isNil(hovered) || panning) {
         return of(undefined);
       }
-      return of(value).pipe(delay(this.tooltipDelayMs));
-    }));
+      return of(hovered).pipe(delay(this.tooltipDelayMs));
+    })
+  );
   readonly mapSvg: Signal<ElementRef<SVGSVGElement>> = viewChild.required<ElementRef<SVGSVGElement>>('map');
   readonly mapG: Signal<ElementRef<SVGGElement>> = viewChild.required<ElementRef<SVGGElement>>('mapG');
 
@@ -55,9 +59,14 @@ export class WorldComponent implements OnInit {
   cursorX: number = 0;
   cursorY: number = 0;
 
-  private isPanning: boolean = false;
-  private lastX: number = 0;
-  private lastY: number = 0;
+  private panStartX: number = 0;
+  private panStartY: number = 0;
+  private panOffsetX: number = 0;
+  private panOffsetY: number = 0;
+
+  get panTransform(): string {
+    return `translate(${this.panOffsetX}px, ${this.panOffsetY}px)`;
+  }
 
   ngOnInit(): void {
     this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef))
@@ -97,13 +106,19 @@ export class WorldComponent implements OnInit {
   }
 
   startPan(e: MouseEvent): void {
-    this.isPanning = true;
-    this.lastX = e.clientX;
-    this.lastY = e.clientY;
+    this.panStartX = e.clientX;
+    this.panStartY = e.clientY;
+    this.panOffsetX = 0;
+    this.panOffsetY = 0;
+    this.panningSubject.next(true);
   }
 
   endPan(): void {
-    this.isPanning = false;
+    if (!this.isPanning()) {
+      return;
+    }
+    this.commitPan();
+    this.panningSubject.next(false);
   }
 
   onMapClick(event: MouseEvent): void {
@@ -153,24 +168,26 @@ export class WorldComponent implements OnInit {
     };
   }
 
+  // W trakcie przeciągania tylko zapamiętuje, o ile pikseli przesunąć gotowy obraz mapy
   private pan(e: MouseEvent): void {
-    if (!this.isPanning) return;
-
-    const svg: SVGSVGElement = this.mapSvg().nativeElement;
-    const ctm: DOMMatrix | null = svg.getScreenCTM();
-    if (_.isNil(ctm)) {
+    if (!this.isPanning()) {
       return;
     }
+    this.panOffsetX = e.clientX - this.panStartX;
+    this.panOffsetY = e.clientY - this.panStartY;
+  }
 
-    const dx: number = e.clientX - this.lastX;
-    const dy: number = e.clientY - this.lastY;
-
-    // ctm to liczba pikseli ekranu na jednostkę mapy
-    this.viewBox.x -= dx / ctm.a;
-    this.viewBox.y -= dy / ctm.d;
-
-    this.lastX = e.clientX;
-    this.lastY = e.clientY;
+  // Po puszczeniu przycisku zamienia przesunięcie w pikselach na zmianę viewBoxa (jedno przemalowanie)
+  // i zeruje przesunięcie obrazu. Obie zmiany trafiają do tej samej klatki, więc mapa nie podskakuje.
+  private commitPan(): void {
+    const ctm: DOMMatrix | null = this.mapSvg().nativeElement.getScreenCTM();
+    if (!_.isNil(ctm)) {
+      // ctm to liczba pikseli ekranu na jednostkę mapy
+      this.viewBox.x -= this.panOffsetX / ctm.a;
+      this.viewBox.y -= this.panOffsetY / ctm.d;
+    }
+    this.panOffsetX = 0;
+    this.panOffsetY = 0;
   }
 
   private rememberCursorPosition(e: MouseEvent): void {
