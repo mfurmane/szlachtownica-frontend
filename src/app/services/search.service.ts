@@ -1,9 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { placeResult, provinceResult, SearchResult } from '../shared/search';
 import { WorldStateService } from './world-state.service';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { allPlaces, ExtendedPlace, Province } from '../shared/map';
 import { getPlaceCharacteristicLabels } from '../shared/places-data';
+import { FormControl } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +13,10 @@ export class SearchService {
 
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
   private readonly provinces$: Observable<Array<Province>> = this.worldStateService.provinces$;
-  private readonly textSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  readonly text$: Observable<string> = this.textSubject.asObservable();
 
-  readonly results$: Observable<Array<SearchResult> | undefined> = this.textSubject.pipe(
+  readonly searchField: FormControl<string> = new FormControl<string>('', { nonNullable: true });
+
+  readonly results$: Observable<Array<SearchResult> | undefined> = this.searchField.valueChanges.pipe(
     debounceTime(300),
     map((query: string) => query.trim().toLowerCase()),
     distinctUntilChanged(),
@@ -28,12 +29,8 @@ export class SearchService {
     }),
     shareReplay(1));
 
-  setText(value: string): void {
-    this.textSubject.next(value);
-  }
-
   clear(): void {
-    this.textSubject.next('');
+    this.searchField.reset();
   }
 
   private search(query: string): Observable<Array<SearchResult>> {

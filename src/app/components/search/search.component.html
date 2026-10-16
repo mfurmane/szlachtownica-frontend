@@ -1,4 +1,4 @@
-<input #query placeholder="Wyszukaj" [value]="text$ | async" type="search" (input)="handleQuery(query.value)">
+<input [formControl]="searchField" placeholder="Wyszukaj" type="search">
 @if (results$ | async; as results) {
   <ul>
     @for (result of results; track result.identifier) {
