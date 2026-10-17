@@ -6,11 +6,12 @@ import { ColoringStrategyService } from '../../services/coloring-strategy.servic
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { SearchComponent } from '../search/search.component';
+import { RegionFilterComponent } from '../../components/forms/region-filter/region-filter.component';
 
 @Component({
   selector: 'app-window',
   standalone: true,
-  imports: [RegionDetailsComponent, AsyncPipe, SearchComponent],
+  imports: [RegionDetailsComponent, AsyncPipe, SearchComponent, RegionFilterComponent],
   templateUrl: './window.component.html',
   styleUrl: './window.component.scss'
 })

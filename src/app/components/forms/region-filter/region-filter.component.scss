@@ -1,0 +1,17 @@
+form {
+  flex-direction: column;
+  align-items: end;
+  display: flex;
+}
+
+label {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5em;
+}
+
+select {
+  width: 50%;
+}

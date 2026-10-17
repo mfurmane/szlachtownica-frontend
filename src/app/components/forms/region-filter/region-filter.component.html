@@ -1,0 +1,15 @@
+<h2>Filtry</h2>
+<form [formGroup]="regionFilterForm">
+  @for (characteristic of characteristics; track characteristic) {
+    <label>{{ characteristicLabels[characteristic] }} <select [formControlName]="controlNames[characteristic]">
+      <option [ngValue]="undefined">—</option>
+      @for (row of characteristicCategories[characteristic].rows; track row.value) {
+        <option [ngValue]="row.value">{{ row.label }}</option>
+      }
+    </select></label>
+  }
+  <button type="button" (click)="regionFilterForm.reset()">Wyczyść</button>
+</form>
+@if (filtered$ | async; as filtered) {
+  <p>Pasujące regiony: {{ filtered.length }}</p>
+}
