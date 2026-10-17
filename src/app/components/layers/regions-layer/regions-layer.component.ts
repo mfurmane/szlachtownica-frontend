@@ -1,7 +1,7 @@
 import { Component, computed, inject, Signal } from '@angular/core';
 import { WorldStateService } from '../../../services/world-state.service';
 import { allRegions, Characteristic, Province, Region, toPath } from '../../../shared/map';
-import { LegendRow, LEGENDS } from '../../../shared/legend';
+import { LegendRow } from '../../../shared/legend';
 import _ from 'lodash';
 import { MapSelectionService } from '../../../services/map-selection.service';
 import { ColoringStrategyService } from '../../../services/coloring-strategy.service';
@@ -18,8 +18,6 @@ export class RegionsLayerComponent {
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
   private readonly coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
-  private readonly highlightedColor: string = '#ffff00';
-  private readonly unhighlightedColor: string = '#292918';
 
   readonly provinces: Signal<Array<Province>> = toSignal(this.worldStateService.provinces$, { initialValue: [] });
   readonly paths: Signal<Map<number, string>> = computed(() => {
@@ -30,16 +28,7 @@ export class RegionsLayerComponent {
 
   readonly currentColoring: Signal<Characteristic> = toSignal(this.coloringStrategyService.currentColoring$, { requireSync: true });
   readonly highlightedCategory: Signal<LegendRow | undefined> = toSignal(this.coloringStrategyService.highlightedCategory$, { requireSync: true });
-  readonly colorFunction: Signal<(region: Region) => string> = computed(() => {
-    const highlighted: LegendRow | undefined = this.highlightedCategory();
-    const coloring: Characteristic = this.currentColoring();
-    return (region: Region) => {
-      if (_.isNil(highlighted)) {
-        return LEGENDS[coloring].colorPicker(region);
-      }
-      return highlighted.matches(region) ? this.highlightedColor : this.unhighlightedColor;
-    }
-  });
+  readonly colorFunction: Signal<(region: Region) => string> = this.coloringStrategyService.colorFunction;
 
   onRegionClick(region: Region, province: Province): void {
     this.selectionService.setSelection({ region, province });
