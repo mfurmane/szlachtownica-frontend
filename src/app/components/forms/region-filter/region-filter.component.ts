@@ -4,7 +4,6 @@ import { CHARACTERISTIC_LABELS, LegendCategory, LEGENDS } from '../../../shared/
 import { RegionFilterForm } from '../../../shared/filter';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
-import _ from 'lodash';
 import { AsyncPipe } from '@angular/common';
 import { FilterService } from '../../../services/filter.service';
 
@@ -33,5 +32,9 @@ export class RegionFilterComponent {
     [Characteristic.SOIL]: 'soil',
     [Characteristic.ENCHANT]: 'enchant'
   };
+
+  clear(): void {
+    this.filterService.clear();
+  }
 
 }

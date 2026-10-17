@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { RegionFilter, RegionFilterForm } from '../shared/filter';
 import { RegionType, SoilType, TerrainShape, Climate, Humidity, EnchantType, Region, allRegions } from '../shared/map';
 import _ from 'lodash';
-import { Observable, startWith, combineLatest, map } from 'rxjs';
+import { Observable, startWith, combineLatest, map, shareReplay } from 'rxjs';
 import { WorldStateService } from './world-state.service';
 
 
@@ -42,7 +42,12 @@ export class FilterService {
           && (_.isNil(filters.terrainShape) || filters.terrainShape === region.terrainShape)
           && (_.isNil(filters.soil) || filters.soil === region.soilType);
       });
-    })
+    }),
+    shareReplay(1)
   );
+
+  clear(): void {
+    this.regionFilterForm.reset();
+  }
 
 }

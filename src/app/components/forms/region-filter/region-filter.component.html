@@ -8,7 +8,7 @@
       }
     </select></label>
   }
-  <button type="button" (click)="regionFilterForm.reset()">Wyczyść</button>
+  <button type="button" (click)="clear()">Wyczyść</button>
 </form>
 @if (filtered$ | async; as filtered) {
   <p>Pasujące regiony: {{ filtered.length }}</p>

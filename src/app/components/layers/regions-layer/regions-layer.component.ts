@@ -1,7 +1,6 @@
 import { Component, computed, inject, Signal } from '@angular/core';
 import { WorldStateService } from '../../../services/world-state.service';
-import { allRegions, Characteristic, Province, Region, toPath } from '../../../shared/map';
-import { LegendRow } from '../../../shared/legend';
+import { allRegions, Province, Region, toPath } from '../../../shared/map';
 import _ from 'lodash';
 import { MapSelectionService } from '../../../services/map-selection.service';
 import { ColoringStrategyService } from '../../../services/coloring-strategy.service';
@@ -26,8 +25,6 @@ export class RegionsLayerComponent {
       .map((region: Region) => [region.id, toPath(region.area)]));
   });
 
-  readonly currentColoring: Signal<Characteristic> = toSignal(this.coloringStrategyService.currentColoring$, { requireSync: true });
-  readonly highlightedCategory: Signal<LegendRow | undefined> = toSignal(this.coloringStrategyService.highlightedCategory$, { requireSync: true });
   readonly colorFunction: Signal<(region: Region) => string> = this.coloringStrategyService.colorFunction;
 
   onRegionClick(region: Region, province: Province): void {
