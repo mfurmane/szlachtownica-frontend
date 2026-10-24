@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Characteristic, Region } from '../../../shared/map';
 import { CHARACTERISTIC_LABELS, LegendCategory, LEGENDS } from '../../../shared/legend';
-import { RegionFilterForm } from '../../../shared/filter';
+import { RegionFilterForm, RegionFilterFormRanges } from '../../../shared/filter';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
@@ -32,6 +32,7 @@ export class RegionFilterComponent {
     [Characteristic.SOIL]: 'soil',
     [Characteristic.ENCHANT]: 'enchant'
   };
+  readonly rangeFields: Array<RegionFilterFormRanges> = [{ name: 'enchantmentLevel', label: 'Siła wpływu', step: 1 }, { name: 'fertility', label: 'Żyzność', step: 0.1 }];
 
   clear(): void {
     this.filterService.clear();

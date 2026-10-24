@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { RegionFilter, RegionFilterForm } from '../shared/filter';
+import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { inRange, rangeCheck, RangeForm, RegionFilter, RegionFilterForm } from '../shared/filter';
 import { RegionType, SoilType, TerrainShape, Climate, Humidity, EnchantType, Region, allRegions } from '../shared/map';
 import _ from 'lodash';
-import { Observable, startWith, combineLatest, map, shareReplay } from 'rxjs';
+import { Observable, startWith, combineLatest, map, shareReplay, filter } from 'rxjs';
 import { WorldStateService } from './world-state.service';
 
 
@@ -16,8 +16,15 @@ export class FilterService {
   private readonly regions$: Observable<Array<Region>> = this.worldStateService.provinces$.pipe(map(allRegions));
 
   //new FormControl(undefined) daje null (domyślny parametr konstruktora)
-  private createControl<T>(): FormControl<T | undefined> {
-    return new FormControl<T | undefined>({ value: undefined, disabled: false }, { nonNullable: true });
+  private createControl<T>(validators?: Array<ValidatorFn>): FormControl<T | undefined> {
+    return new FormControl<T | undefined>({ value: undefined, disabled: false }, { validators: validators, nonNullable: true });
+  }
+
+  private createRangeControl(): FormGroup<RangeForm> {
+    return new FormGroup<RangeForm>({
+      from: this.createControl<number>([Validators.min(0)]),
+      to: this.createControl<number>([Validators.min(0)])
+    }, { validators: [rangeCheck] });
   }
 
   readonly regionFilterForm: FormGroup<RegionFilterForm> = new FormGroup<RegionFilterForm>({
@@ -27,11 +34,14 @@ export class FilterService {
     climate: this.createControl<Climate>(),
     humidity: this.createControl<Humidity>(),
     enchant: this.createControl<EnchantType>(),
-    enchantmentLevel: this.createControl<number>(),
-    fertility: this.createControl<number>()
+    enchantmentLevel: this.createRangeControl(),
+    fertility: this.createRangeControl()
   });
 
-  private readonly filters$: Observable<RegionFilter> = this.regionFilterForm.valueChanges.pipe(startWith(this.regionFilterForm.getRawValue()));
+  private readonly filters$: Observable<RegionFilter> = this.regionFilterForm.valueChanges.pipe(
+    filter(() => this.regionFilterForm.valid),
+    startWith(this.regionFilterForm.getRawValue())
+  );
   readonly filtered$: Observable<Array<Region>> = combineLatest([this.filters$, this.regions$]).pipe(
     map(([filters, regions]: [RegionFilter, Array<Region>]) => {
       return regions.filter((region: Region) => {
@@ -40,7 +50,9 @@ export class FilterService {
           && (_.isNil(filters.humidity) || filters.humidity === region.humidity)
           && (_.isNil(filters.regionType) || filters.regionType === region.type)
           && (_.isNil(filters.terrainShape) || filters.terrainShape === region.terrainShape)
-          && (_.isNil(filters.soil) || filters.soil === region.soilType);
+          && (_.isNil(filters.soil) || filters.soil === region.soilType)
+          && inRange(region.fertility, filters.fertility)
+          && inRange(region.enchantmentLevel, filters.enchantmentLevel)
       });
     }),
     shareReplay(1)

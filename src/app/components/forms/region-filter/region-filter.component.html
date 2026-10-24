@@ -8,8 +8,25 @@
       }
     </select></label>
   }
+  @for (rangeField of rangeFields; track rangeField.name) {
+    <fieldset [formGroupName]="rangeField.name">
+      <legend>{{ rangeField.label }}</legend>
+      <label>Od<input formControlName="from" type="number" [step]="rangeField.step"></label>
+      @if (regionFilterForm.getError('min', rangeField.name + '.from'); as error) {
+        <p class="error">Minimalna wartość: {{error.min}}</p>
+      }
+      <label>Do<input formControlName="to" type="number" [step]="rangeField.step"></label>
+      @if (regionFilterForm.getError('min', rangeField.name + '.to'); as error) {
+        <p class="error">Minimalna wartość: {{error.min}}</p>
+      }
+      @if (regionFilterForm.hasError('rangeCorruption', rangeField.name)) {
+        <p class="error">Wartość Od jest większa niż Do</p>
+      }
+    </fieldset>
+  }
   <button type="button" (click)="clear()">Wyczyść</button>
 </form>
+
 @if (filtered$ | async; as filtered) {
   <p>Pasujące regiony: {{ filtered.length }}</p>
 }
