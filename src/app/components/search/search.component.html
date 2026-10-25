@@ -4,8 +4,8 @@
     @for (result of results; track result.identifier) {
       @switch (result.type) {
         @case (ResultType.PLACE) {
-          @if (result.place; as place) {
-            <li><button (click)="showPlace(place)">{{place.place.name}} ({{getTypeLabel(place.place)}})</button></li>
+          @if (result.extendedPlace; as extendedPlace) {
+            <li><button (click)="showPlace(extendedPlace)">{{extendedPlace.place.name}} ({{getTypeLabel(extendedPlace.place)}})</button></li>
           }
         }
         @case (ResultType.PROVINCE) {

@@ -34,7 +34,7 @@ export interface RegionFilterForm {
   fertility: FormGroup<RangeForm>;
 }
 
-export interface RegionFilterFormRanges {
+export interface RegionFilterFormRangeField {
   name: keyof RegionFilterForm;
   label: string;
   step: number

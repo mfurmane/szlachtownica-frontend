@@ -14,12 +14,12 @@ import _ from 'lodash';
 })
 export class PolygonSelectedLayerComponent {
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
-  readonly selection$: Observable<string | undefined> = this.selectionService.selection$.pipe(
-    map((value: MapSelection | undefined) => {
-      if (_.isNil(value) || !_.isNil(value.place)) {
+  readonly selectedPath$: Observable<string | undefined> = this.selectionService.selection$.pipe(
+    map((selection: MapSelection | undefined) => {
+      if (_.isNil(selection) || !_.isNil(selection.place)) {
         return undefined;
       }
-      return toPath(value.region.area);
+      return toPath(selection.region.area);
     })
   );
 }

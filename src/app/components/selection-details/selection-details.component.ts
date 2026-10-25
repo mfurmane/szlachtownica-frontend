@@ -7,13 +7,13 @@ import { getPlaceCharacteristicLabels, getTypeLabel } from '../../shared/places-
 import _ from 'lodash';
 
 @Component({
-  selector: 'app-region-details',
+  selector: 'app-selection-details',
   standalone: true,
   imports: [DecimalPipe],
-  templateUrl: './region-details.component.html',
-  styleUrl: './region-details.component.scss'
+  templateUrl: './selection-details.component.html',
+  styleUrl: './selection-details.component.scss'
 })
-export class RegionDetailsComponent {
+export class SelectionDetailsComponent {
 
   readonly selection: InputSignal<MapSelection> = input.required<MapSelection>();
   readonly values: Signal<Array<CharacteristicSelection>> = computed((): Array<CharacteristicSelection> =>

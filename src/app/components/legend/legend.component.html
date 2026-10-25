@@ -5,7 +5,7 @@
     @for (row of getLegend().rows; track row.value) {
         <button class="legend-row" [class.active]="row === highlighted" (click)="highlightCategory(row)"
           [attr.title]="row === highlighted ? 'Kliknij ponownie, aby wyłączyć' : undefined">
-            <span class="swatch" [style.background-color]="row.color"></span>
+            <span class="swatch" [style.background-color]="palette()[currentColoring][row.value]"></span>
             {{ row.label }}
             @if (regionCounts.has(row)) {
               ({{ regionCounts.get(row) }})

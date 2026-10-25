@@ -1,25 +1,36 @@
 import { Component, inject } from '@angular/core';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
-import { RegionDetailsComponent } from '../region-details/region-details.component';
+import { SelectionDetailsComponent } from '../selection-details/selection-details.component';
 import { CharacteristicSelection } from '../../shared/legend';
-import { ColoringStrategyService } from '../../services/coloring-strategy.service';
+import { ColoringService } from '../../services/coloring.service';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { SearchComponent } from '../search/search.component';
 import { RegionFilterComponent } from '../../components/forms/region-filter/region-filter.component';
+import { ColoringSettingsComponent } from '../forms/coloring-settings/coloring-settings.component';
+
+enum SideView {
+  SEARCH='SEARCH',
+  FILTER='FILTER',
+  DETAILS='DETAILS',
+  SETTINGS='SETTINGS'
+}
 
 @Component({
-  selector: 'app-window',
+  selector: 'app-side-panel',
   standalone: true,
-  imports: [RegionDetailsComponent, AsyncPipe, SearchComponent, RegionFilterComponent],
-  templateUrl: './window.component.html',
-  styleUrl: './window.component.scss'
+  imports: [SelectionDetailsComponent, AsyncPipe, SearchComponent, RegionFilterComponent, ColoringSettingsComponent],
+  templateUrl: './side-panel.component.html',
+  styleUrl: './side-panel.component.scss'
 })
-export class WindowComponent {
+export class SidePanelComponent {
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
-  private readonly coloringService: ColoringStrategyService = inject(ColoringStrategyService);
+  private readonly coloringService: ColoringService = inject(ColoringService);
 
   readonly selection$: Observable<MapSelection | undefined> = this.selectionService.selection$;
+
+  readonly SideView: typeof SideView = SideView;
+  selectedView: SideView = SideView.DETAILS;
 
   onCharacteristicSelected(selection: CharacteristicSelection): void {
     this.coloringService.showCategory(selection.characteristic, selection.row);
@@ -28,5 +39,4 @@ export class WindowComponent {
   clearSelection(): void {
     this.selectionService.clearSelection();
   }
-
 }

@@ -24,7 +24,6 @@ export class PolygonSearchLayerComponent {
   readonly provinceResults$: Observable<Array<ProvinceResult>> = this.searchService.results$.pipe(
     onlyType(ResultType.PROVINCE),
     map((values: Array<SearchResult>) => values
-      .filter((value: SearchResult) => !_.isNil(value.province))
       .flatMap((value: SearchResult) => {
         return _.isNil(value.province) ? [] : [{ province: value.province, path: toPath(value.province.area) }];
       }))

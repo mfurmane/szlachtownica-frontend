@@ -7,13 +7,13 @@ import { getPlaceCharacteristicLabels, getTypeLabel } from '../../shared/places-
 import _ from 'lodash';
 
 @Component({
-  selector: 'app-region-tooltip',
+  selector: 'app-map-tooltip',
   standalone: true,
   imports: [DecimalPipe],
-  templateUrl: './region-tooltip.component.html',
-  styleUrl: './region-tooltip.component.scss'
+  templateUrl: './map-tooltip.component.html',
+  styleUrl: './map-tooltip.component.scss'
 })
-export class RegionTooltipComponent {
+export class MapTooltipComponent {
 
   readonly selection: InputSignal<MapSelection> = input.required<MapSelection>();
   readonly characteristic: InputSignal<Characteristic> = input.required<Characteristic>();

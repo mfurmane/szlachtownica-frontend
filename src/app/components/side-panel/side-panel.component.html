@@ -1,0 +1,31 @@
+<nav class="tabs">
+  <button [class.active]="selectedView === SideView.SEARCH" (click)="selectedView = SideView.SEARCH">Wyszukiwarka</button>
+  <button [class.active]="selectedView === SideView.FILTER" (click)="selectedView = SideView.FILTER">Filtrowanie</button>
+  <button [class.active]="selectedView === SideView.DETAILS" (click)="selectedView = SideView.DETAILS">Podgląd</button>
+  <button [class.active]="selectedView === SideView.SETTINGS" (click)="selectedView = SideView.SETTINGS">Ustawienia</button>
+</nav>
+@switch (selectedView) {
+  @case (SideView.SEARCH) {
+    <app-search></app-search>
+  }
+  @case (SideView.FILTER) {
+    <app-region-filter></app-region-filter>
+  }
+  @case (SideView.SETTINGS) {
+    <app-coloring-settings></app-coloring-settings>
+  }
+  @case (SideView.DETAILS) {
+    <section class="selection">
+      <h2>Wybrany element</h2>
+      @if (selection$ | async; as selection) {
+        <app-selection-details [selection]="selection" (characteristicSelected)="onCharacteristicSelected($event)"/>
+        <button (click)="clearSelection()">Wyczyść zaznaczenie</button>
+      }
+      @else {
+        <h3>Wybierz element</h3>
+      }
+    </section>
+  }
+}
+
+

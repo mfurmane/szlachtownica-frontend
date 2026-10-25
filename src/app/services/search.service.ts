@@ -36,8 +36,8 @@ export class SearchService {
   private search(query: string): Observable<Array<SearchResult>> {
     return this.provinces$.pipe(map((provinces: Array<Province>) => {
       const placeResults = allPlaces(provinces)
-        .filter((place: ExtendedPlace) => this.placeFitsQuery(place, query))
-        .map((place: ExtendedPlace) => placeResult(place));
+        .filter((extendedPlace: ExtendedPlace) => this.placeFitsQuery(extendedPlace, query))
+        .map((extendedPlace: ExtendedPlace) => placeResult(extendedPlace));
       const provinceResults = provinces
         .filter((province: Province) => this.provinceFitsQuery(province, query))
         .map((province: Province) => provinceResult(province));
@@ -49,11 +49,11 @@ export class SearchService {
     return province.name.toLowerCase().includes(query);
   }
 
-  private placeFitsQuery(place: ExtendedPlace, query: string): boolean {
-    if (place.place.name.toLowerCase().includes(query)) {
+  private placeFitsQuery(extendedPlace: ExtendedPlace, query: string): boolean {
+    if (extendedPlace.place.name.toLowerCase().includes(query)) {
       return true;
     }
-    return getPlaceCharacteristicLabels(place.place.placeCharacteristics).some((tag: string) => tag.toLowerCase().includes(query));
+    return getPlaceCharacteristicLabels(extendedPlace.place.placeCharacteristics).some((tag: string) => tag.toLowerCase().includes(query));
   }
 
 }

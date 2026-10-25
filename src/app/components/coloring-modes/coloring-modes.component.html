@@ -1,6 +1,6 @@
   <div class="modes">
     @for (coloring of availableColorings; track coloring) {
-      <button [class.active]="coloring === currentColoring" (click)="setStrategy(coloring)">
+      <button [class.active]="coloring === currentColoring" (click)="selectColoring(coloring)">
           {{ characteristicLabels[coloring] }}
       </button>
     }

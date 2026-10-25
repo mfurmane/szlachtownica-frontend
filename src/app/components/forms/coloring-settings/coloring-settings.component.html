@@ -1,0 +1,19 @@
+<h2>Kolory kategorii</h2>
+<div class="actions">
+  @if (paletteForm.dirty) {
+    <button (click)="reset()">Resetuj</button>
+  }
+  <button (click)="save()" disabled>Zapisz</button>
+</div>
+<form [formGroup]="paletteForm">
+  @for (characteristic of characteristics; track characteristic) {
+    <fieldset [formGroupName]="characteristic">
+      <legend>{{ characteristicLabels[characteristic] }}</legend>
+      <div class="colors">
+        @for (row of legends[characteristic].rows; track row.value) {
+          <label><input type="color" [formControlName]="row.value"> {{ row.label }}</label>
+        }
+      </div>
+    </fieldset>
+  }
+</form>

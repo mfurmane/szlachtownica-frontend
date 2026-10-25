@@ -1,0 +1,48 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+}
+
+.selection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+// Zakładki zostają na górze, kiedy panel przewija się pod nimi (ustawienia kolorów są długie)
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  // przy najwęższym panelu napisy się nie mieszczą, więc ostatnie zakładki schodzą do drugiego wiersza
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.tabs button {
+  flex: 1 1 auto;
+  padding: 8px 4px;
+  // kreska aktywnej zakładki przykrywa szarą linię pod paskiem
+  margin-bottom: -1px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tabs button:hover {
+  color: var(--text);
+}
+
+// Bez pogrubienia: zmieniłoby szerokość napisu i przesunęło pozostałe zakładki
+.tabs button.active {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}

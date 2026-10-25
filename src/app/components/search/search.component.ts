@@ -30,8 +30,8 @@ export class SearchComponent {
     //TODO
   }
 
-  showPlace(place: ExtendedPlace): void {
-    this.selectionService.setSelection(place);
+  showPlace(extendedPlace: ExtendedPlace): void {
+    this.selectionService.setSelection(extendedPlace);
   }
 
 }

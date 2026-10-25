@@ -1,14 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, DestroyRef, ElementRef, OnInit, Signal, computed, inject, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, Signal, inject, viewChild } from '@angular/core';
 import { Characteristic, Province } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
-import { ColoringStrategyService } from '../../services/coloring-strategy.service';
+import { ColoringService } from '../../services/coloring.service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { WorldStateService } from '../../services/world-state.service';
 import { LegendComponent } from '../legend/legend.component';
 import { ColoringModesComponent } from '../coloring-modes/coloring-modes.component';
-import { BehaviorSubject, combineLatest, delay, map, Observable, of, Subject, switchMap } from 'rxjs';
-import { RegionTooltipComponent } from '../region-tooltip/region-tooltip.component';
+import { BehaviorSubject, combineLatest, delay, Observable, of, switchMap } from 'rxjs';
+import { MapTooltipComponent } from '../map-tooltip/map-tooltip.component';
 import _ from 'lodash';
 import { PointSearchLayerComponent } from '../layers/point-search-layer/point-search-layer.component';
 import { PointSelectedLayerComponent } from '../layers/point-selected-layer/point-selected-layer.component';
@@ -27,7 +27,7 @@ interface ViewBox {
 @Component({
   selector: 'app-world',
   standalone: true,
-  imports: [LegendComponent, ColoringModesComponent, RegionTooltipComponent, AsyncPipe, PointSearchLayerComponent,
+  imports: [LegendComponent, ColoringModesComponent, MapTooltipComponent, AsyncPipe, PointSearchLayerComponent,
     PointSelectedLayerComponent, PolygonSearchLayerComponent, PolygonSelectedLayerComponent, RegionsLayerComponent, PlacesLayerComponent],
   templateUrl: './world.component.html',
   styleUrl: './world.component.scss'
@@ -35,7 +35,7 @@ interface ViewBox {
 export class WorldComponent implements OnInit {
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
-  private readonly coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
+  private readonly coloringService: ColoringService = inject(ColoringService);
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
 
   private readonly tooltipDelayMs: number = 500;
@@ -73,7 +73,7 @@ export class WorldComponent implements OnInit {
       .subscribe((data: Array<Province>) => {
         this.viewBox = this.computeViewBox(data);
       });
-    this.coloringStrategyService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef))
+    this.coloringService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((currentColoring: Characteristic) => {
         this.currentColoring = currentColoring;
       });

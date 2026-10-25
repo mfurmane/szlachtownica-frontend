@@ -1,5 +1,5 @@
-@if (selection$ | async; as selection) {
+@if (selectedPath$ | async; as selectedPath) {
   <svg:path
-    [attr.d]="selection">
+    [attr.d]="selectedPath">
   </path>
 }

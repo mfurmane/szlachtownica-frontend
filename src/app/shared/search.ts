@@ -5,7 +5,7 @@ import _ from 'lodash';
 export interface SearchResult {
   type: ResultType;
   identifier: string;
-  place?: ExtendedPlace;
+  extendedPlace?: ExtendedPlace;
   province?: Province;
 }
 
@@ -14,8 +14,8 @@ export enum ResultType {
   PROVINCE = 'PROVINCE'
 }
 
-export function placeResult(place: ExtendedPlace): SearchResult {
-  return { type: ResultType.PLACE, identifier: ResultType.PLACE + place.place.id, place };
+export function placeResult(extendedPlace: ExtendedPlace): SearchResult {
+  return { type: ResultType.PLACE, identifier: ResultType.PLACE + extendedPlace.place.id, extendedPlace };
 }
 
 export function provinceResult(province: Province): SearchResult {

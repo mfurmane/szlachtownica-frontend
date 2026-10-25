@@ -15,14 +15,13 @@ export const CHARACTERISTIC_LABELS: Record<Characteristic, string> = {
 export interface LegendRow {
   readonly value: string;
   readonly label: string;
-  readonly color: string;
+  readonly defaultColor: string;
   readonly matches: (region: Region) => boolean;
 }
 
 export interface LegendCategory {
   readonly rows: ReadonlyArray<LegendRow>;
   readonly valuePicker: (region: Region) => string;
-  readonly colorPicker: (region: Region) => string;
 }
 
 export interface CharacteristicSelection {
@@ -49,11 +48,10 @@ function buildCategory<T extends string>(
     rows: values.map((value: T) => ({
       value,
       label: labels[value],
-      color: colors[value],
+      defaultColor: colors[value],
       matches: (region: Region) => picker(region) === value
     })),
-    valuePicker: picker,
-    colorPicker: (region: Region) => colors[picker(region)]
+    valuePicker: picker
   };
 }
 

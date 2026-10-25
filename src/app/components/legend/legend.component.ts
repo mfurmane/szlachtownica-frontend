@@ -1,9 +1,10 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { allRegions, Characteristic, Province, Region } from '../../shared/map';
-import { ColoringStrategyService } from '../../services/coloring-strategy.service';
+import { ColoringService } from '../../services/coloring.service';
 import { LegendCategory, LegendRow, LEGENDS } from '../../shared/legend';
 import { WorldStateService } from '../../services/world-state.service';
+import { Palette } from '../../shared/coloring';
 
 @Component({
   selector: 'app-legend',
@@ -14,7 +15,7 @@ import { WorldStateService } from '../../services/world-state.service';
 })
 export class LegendComponent implements OnInit {
 
-  private readonly coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
+  private readonly coloringService: ColoringService = inject(ColoringService);
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
@@ -23,11 +24,13 @@ export class LegendComponent implements OnInit {
   regionCounts: Map<LegendRow, number> = new Map<LegendRow, number>();
   collapsed: boolean = false;
 
+  palette: Signal<Palette> = this.coloringService.palette;
+
   ngOnInit(): void {
-    this.coloringStrategyService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((currentColoring: Characteristic) => {
+    this.coloringService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((currentColoring: Characteristic) => {
       this.currentColoring = currentColoring;
     });
-    this.coloringStrategyService.highlightedCategory$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((highlighted: LegendRow | undefined) => {
+    this.coloringService.highlightedCategory$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((highlighted: LegendRow | undefined) => {
       this.highlighted = highlighted;
     });
     this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef))
@@ -46,7 +49,7 @@ export class LegendComponent implements OnInit {
   }
 
   highlightCategory(row: LegendRow): void {
-    this.coloringStrategyService.highlightCategory(row);
+    this.coloringService.highlightCategory(row);
   }
 
   private countRegions(regions: Array<Region>): Map<LegendRow, number> {

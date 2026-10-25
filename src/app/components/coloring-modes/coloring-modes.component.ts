@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ColoringStrategyService } from '../../services/coloring-strategy.service';
+import { ColoringService } from '../../services/coloring.service';
 import { CHARACTERISTIC_LABELS } from '../../shared/legend';
 import { Characteristic } from '../../shared/map';
 
@@ -16,19 +16,19 @@ export class ColoringModesComponent implements OnInit {
   readonly availableColorings: Array<Characteristic> = Object.values(Characteristic);
   readonly characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
 
-  private readonly coloringStrategyService: ColoringStrategyService = inject(ColoringStrategyService);
+  private readonly coloringService: ColoringService = inject(ColoringService);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
   currentColoring: Characteristic = Characteristic.REGION_TYPE;
 
   ngOnInit(): void {
-    this.coloringStrategyService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((currentColoring: Characteristic) => {
+    this.coloringService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((currentColoring: Characteristic) => {
       this.currentColoring = currentColoring;
     });
   }
 
-  setStrategy(characteristic: Characteristic): void {
-    this.coloringStrategyService.setCurrentColoring(characteristic);
+  selectColoring(characteristic: Characteristic): void {
+    this.coloringService.setCurrentColoring(characteristic);
   }
 
 }

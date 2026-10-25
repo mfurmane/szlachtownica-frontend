@@ -10,7 +10,6 @@ export interface Province {
 export interface SubProvince {
   id: number;
   area: Polygon;
-  provinces: Province;
   regions: Array<Region>;
 }
 
@@ -54,17 +53,14 @@ export interface ExtendedPlace {
 }
 
 export function toPath(geometry: Polygon): string {
-    if (geometry.type === 'Polygon') {
-      return geometry.coordinates
-        .map((ring: Array<Array<number>>) =>
-          ring.map((point: Array<number>, i: number) =>
-            (i === 0 ? 'M' : 'L') + point[0] + ' ' + (point[1])
-          ).join(' ') + ' Z'
-        )
-        .join(' ');
-    }
-    return '';
-  }
+  return geometry.coordinates
+    .map((ring: Array<Array<number>>) =>
+      ring.map((point: Array<number>, i: number) =>
+        (i === 0 ? 'M' : 'L') + point[0] + ' ' + (point[1])
+      ).join(' ') + ' Z'
+    )
+    .join(' ');
+}
 
 export function allRegions(provinces: Array<Province>): Array<Region> {
   return provinces
