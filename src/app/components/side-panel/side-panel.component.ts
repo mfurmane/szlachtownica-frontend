@@ -1,4 +1,4 @@
-import { Component, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import { SelectionDetailsComponent } from '../selection-details/selection-details.component';
 import { CharacteristicSelection } from '../../shared/legend';
@@ -6,6 +6,7 @@ import { ColoringService } from '../../services/coloring.service';
 import { SearchComponent } from '../search/search.component';
 import { RegionFilterComponent } from '../../components/forms/region-filter/region-filter.component';
 import { ColoringSettingsComponent } from '../forms/coloring-settings/coloring-settings.component';
+import _ from 'lodash';
 
 enum SideView {
   SEARCH='SEARCH',
@@ -29,6 +30,15 @@ export class SidePanelComponent {
 
   readonly SideView: typeof SideView = SideView;
   readonly selectedView: WritableSignal<SideView> = signal<SideView>(SideView.DETAILS);
+
+  constructor() {
+    effect(() => {
+      const selection: MapSelection | undefined = this.selection();
+      if (!_.isNil(selection)) {
+        this.selectedView.set(SideView.DETAILS);
+      }
+    }, { allowSignalWrites: true });
+  }
 
   onCharacteristicSelected(selection: CharacteristicSelection): void {
     this.coloringService.showCategory(selection.characteristic, selection.row);
