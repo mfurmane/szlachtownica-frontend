@@ -27,6 +27,4 @@
   <button type="button" (click)="clear()">Wyczyść</button>
 </form>
 
-@if (filtered$ | async; as filtered) {
-  <p>Pasujące regiony: {{ filtered.length }}</p>
-}
+<p>Pasujące regiony: {{ filtered().length }}</p>

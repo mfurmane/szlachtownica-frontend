@@ -1,17 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Signal } from '@angular/core';
 import { Characteristic, Region } from '../../../shared/map';
 import { CHARACTERISTIC_LABELS, LegendCategory, LEGENDS } from '../../../shared/legend';
 import { RegionFilterForm, RegionFilterFormRangeField } from '../../../shared/filter';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
 import { FilterService } from '../../../services/filter.service';
 
 
 @Component({
   selector: 'app-region-filter',
   standalone: true,
-  imports: [ReactiveFormsModule, AsyncPipe],
+  imports: [ReactiveFormsModule],
   templateUrl: './region-filter.component.html',
   styleUrl: './region-filter.component.scss'
 })
@@ -19,7 +17,7 @@ export class RegionFilterComponent {
   private readonly filterService: FilterService = inject(FilterService);
 
   readonly regionFilterForm: FormGroup<RegionFilterForm> = this.filterService.regionFilterForm;
-  readonly filtered$: Observable<Array<Region>> = this.filterService.filtered$;
+  readonly filtered: Signal<Array<Region>> = this.filterService.filtered;
 
   readonly characteristics: Array<Characteristic> = Object.values(Characteristic);
   readonly characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;

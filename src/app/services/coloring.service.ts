@@ -65,7 +65,7 @@ export class ColoringService {
 
   readonly currentColoring: Signal<Characteristic> = toSignal(this.currentColoring$, { requireSync: true });
   readonly highlightedCategory: Signal<LegendRow | undefined> = toSignal(this.highlightedCategory$, { requireSync: true });
-  readonly filtered: Signal<Array<Region>> = toSignal(this.filterService.filtered$, { initialValue: [] });
+  readonly filtered: Signal<Array<Region>> = this.filterService.filtered;
   readonly colorFunction: Signal<(region: Region) => string> = computed(() => {
     const highlighted: LegendRow | undefined = this.highlightedCategory();
     const coloring: Characteristic = this.currentColoring();
