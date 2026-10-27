@@ -1,10 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import { SelectionDetailsComponent } from '../selection-details/selection-details.component';
 import { CharacteristicSelection } from '../../shared/legend';
 import { ColoringService } from '../../services/coloring.service';
-import { Observable } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
 import { SearchComponent } from '../search/search.component';
 import { RegionFilterComponent } from '../../components/forms/region-filter/region-filter.component';
 import { ColoringSettingsComponent } from '../forms/coloring-settings/coloring-settings.component';
@@ -19,7 +17,7 @@ enum SideView {
 @Component({
   selector: 'app-side-panel',
   standalone: true,
-  imports: [SelectionDetailsComponent, AsyncPipe, SearchComponent, RegionFilterComponent, ColoringSettingsComponent],
+  imports: [SelectionDetailsComponent, SearchComponent, RegionFilterComponent, ColoringSettingsComponent],
   templateUrl: './side-panel.component.html',
   styleUrl: './side-panel.component.scss'
 })
@@ -27,10 +25,10 @@ export class SidePanelComponent {
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
   private readonly coloringService: ColoringService = inject(ColoringService);
 
-  readonly selection$: Observable<MapSelection | undefined> = this.selectionService.selection$;
+  readonly selection: Signal<MapSelection | undefined> = this.selectionService.selection;
 
   readonly SideView: typeof SideView = SideView;
-  selectedView: SideView = SideView.DETAILS;
+  readonly selectedView: WritableSignal<SideView> = signal<SideView>(SideView.DETAILS);
 
   onCharacteristicSelected(selection: CharacteristicSelection): void {
     this.coloringService.showCategory(selection.characteristic, selection.row);

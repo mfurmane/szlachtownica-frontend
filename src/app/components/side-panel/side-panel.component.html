@@ -1,10 +1,10 @@
 <nav class="tabs">
-  <button [class.active]="selectedView === SideView.SEARCH" (click)="selectedView = SideView.SEARCH">Wyszukiwarka</button>
-  <button [class.active]="selectedView === SideView.FILTER" (click)="selectedView = SideView.FILTER">Filtrowanie</button>
-  <button [class.active]="selectedView === SideView.DETAILS" (click)="selectedView = SideView.DETAILS">Podgląd</button>
-  <button [class.active]="selectedView === SideView.SETTINGS" (click)="selectedView = SideView.SETTINGS">Ustawienia</button>
+  <button [class.active]="selectedView() === SideView.SEARCH" (click)="selectedView.set(SideView.SEARCH)">Wyszukiwarka</button>
+  <button [class.active]="selectedView() === SideView.FILTER" (click)="selectedView.set(SideView.FILTER)">Filtrowanie</button>
+  <button [class.active]="selectedView() === SideView.DETAILS" (click)="selectedView.set(SideView.DETAILS)">Podgląd</button>
+  <button [class.active]="selectedView() === SideView.SETTINGS" (click)="selectedView.set(SideView.SETTINGS)">Ustawienia</button>
 </nav>
-@switch (selectedView) {
+@switch (selectedView()) {
   @case (SideView.SEARCH) {
     <app-search></app-search>
   }
@@ -17,7 +17,7 @@
   @case (SideView.DETAILS) {
     <section class="selection">
       <h2>Wybrany element</h2>
-      @if (selection$ | async; as selection) {
+      @if (selection(); as selection) {
         <app-selection-details [selection]="selection" (characteristicSelected)="onCharacteristicSelected($event)"/>
         <button (click)="clearSelection()">Wyczyść zaznaczenie</button>
       }

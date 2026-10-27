@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { Place, Province, Region } from '../shared/map';
 
 export interface MapSelection {
@@ -13,26 +12,26 @@ export interface MapSelection {
 })
 export class MapSelectionService {
 
-  private readonly selectionSubject: BehaviorSubject<MapSelection | undefined> = new BehaviorSubject<MapSelection | undefined>(undefined);
-  readonly selection$: Observable<MapSelection | undefined> = this.selectionSubject.asObservable();
+  private readonly selectionSignal: WritableSignal<MapSelection | undefined> = signal<MapSelection | undefined>(undefined);
+  readonly selection: Signal<MapSelection | undefined> = this.selectionSignal.asReadonly();
 
-  private readonly hoveredSubject: BehaviorSubject<MapSelection | undefined> = new BehaviorSubject<MapSelection | undefined>(undefined);
-  readonly hovered$: Observable<MapSelection | undefined> = this.hoveredSubject.asObservable();
+  private readonly hoveredSignal: WritableSignal<MapSelection | undefined> = signal<MapSelection | undefined>(undefined);
+  readonly hovered: Signal<MapSelection | undefined> = this.hoveredSignal.asReadonly();
 
   setSelection(selection: MapSelection): void {
-    this.selectionSubject.next(selection);
+    this.selectionSignal.set(selection);
   }
 
   clearSelection(): void {
-    this.selectionSubject.next(undefined);
+    this.selectionSignal.set(undefined);
   }
 
   setHovered(hovered: MapSelection): void {
-    this.hoveredSubject.next(hovered);
+    this.hoveredSignal.set(hovered);
   }
 
   clearHovered(): void {
-    this.hoveredSubject.next(undefined);
+    this.hoveredSignal.set(undefined);
   }
 
 }

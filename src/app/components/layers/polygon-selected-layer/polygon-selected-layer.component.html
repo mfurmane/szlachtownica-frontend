@@ -1,4 +1,4 @@
-@if (selectedPath$ | async; as selectedPath) {
+@if (selectedPath(); as selectedPath) {
   <svg:path
     [attr.d]="selectedPath">
   </path>

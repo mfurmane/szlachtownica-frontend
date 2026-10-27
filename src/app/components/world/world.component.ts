@@ -3,7 +3,7 @@ import { Component, DestroyRef, ElementRef, OnInit, Signal, inject, viewChild } 
 import { Characteristic, Province } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import { ColoringService } from '../../services/coloring.service';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { WorldStateService } from '../../services/world-state.service';
 import { LegendComponent } from '../legend/legend.component';
 import { ColoringModesComponent } from '../coloring-modes/coloring-modes.component';
@@ -43,7 +43,9 @@ export class WorldComponent implements OnInit {
   private readonly panningSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private readonly panning$: Observable<boolean> = this.panningSubject.asObservable();
   readonly isPanning: Signal<boolean> = toSignal(this.panning$, { requireSync: true });
-  readonly tooltipTarget$: Observable<MapSelection | undefined> = combineLatest([this.panning$, this.selectionService.hovered$]).pipe(
+  private readonly hovered$: Observable<MapSelection | undefined> = toObservable(this.selectionService.hovered);
+
+  readonly tooltipTarget$: Observable<MapSelection | undefined> = combineLatest([this.panning$, this.hovered$]).pipe(
     switchMap(([panning, hovered]: [boolean, MapSelection | undefined]) => {
       if (_.isNil(hovered) || panning) {
         return of(undefined);
