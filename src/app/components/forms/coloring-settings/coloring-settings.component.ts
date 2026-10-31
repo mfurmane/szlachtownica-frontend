@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ColoringService } from '../../../services/coloring.service';
 import { PaletteForm } from '../../../shared/coloring';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -9,6 +9,7 @@ import { CHARACTERISTIC_LABELS, LegendCategory, LEGENDS } from '../../../shared/
   selector: 'app-coloring-settings',
   standalone: true,
   imports: [ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './coloring-settings.component.html',
   styleUrl: './coloring-settings.component.scss'
 })

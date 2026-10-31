@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SearchService } from '../../../services/search.service';
 import { SearchResult, onlyType, ResultType } from '../../../shared/search';
@@ -8,6 +8,7 @@ import { SearchResult, onlyType, ResultType } from '../../../shared/search';
   selector: 'g[appPointSearchLayer]',
   standalone: true,
   imports: [AsyncPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './point-search-layer.component.html',
   styleUrl: './point-search-layer.component.scss'
 })

@@ -7,7 +7,7 @@
   <svg #map
     width="100%"
     height="90%"
-    [attr.viewBox]="viewBox.x + ' ' + viewBox.y + ' ' + viewBox.w + ' ' + viewBox.h"
+    [attr.viewBox]="viewBox().x + ' ' + viewBox().y + ' ' + viewBox().w + ' ' + viewBox().h"
     [style.transform]="panTransform"
     (wheel)="onWheel($event)"
     (mousedown)="startPan($event)"
@@ -35,7 +35,7 @@
   <app-map-tooltip
     class="tooltip"
     [selection]="hovered"
-    [characteristic]="currentColoring"
+    [characteristic]="currentColoring()"
     [style.left.px]="cursorX + 8"
     [style.top.px]="cursorY + 8"
     />

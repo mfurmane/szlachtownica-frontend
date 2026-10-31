@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { onlyType, ResultType, SearchResult } from '../../../shared/search';
 import { SearchService } from '../../../services/search.service';
@@ -15,6 +15,7 @@ interface ProvinceResult {
   selector: 'g[appPolygonSearchLayer]',
   standalone: true,
   imports: [AsyncPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './polygon-search-layer.component.html',
   styleUrl: './polygon-search-layer.component.scss'
 })

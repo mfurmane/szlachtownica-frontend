@@ -1,4 +1,4 @@
-import { Component, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
 import { Characteristic, Region } from '../../../shared/map';
 import { CHARACTERISTIC_LABELS, LegendCategory, LEGENDS } from '../../../shared/legend';
 import { RegionFilterForm, RegionFilterFormRangeField } from '../../../shared/filter';
@@ -10,6 +10,7 @@ import { FilterService } from '../../../services/filter.service';
   selector: 'app-region-filter',
   standalone: true,
   imports: [ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './region-filter.component.html',
   styleUrl: './region-filter.component.scss'
 })

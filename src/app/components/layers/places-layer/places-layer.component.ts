@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { allPlaces, ExtendedPlace, Province } from '../../../shared/map';
 import { MapSelectionService } from '../../../services/map-selection.service';
 import { WorldStateService } from '../../../services/world-state.service';
@@ -8,6 +8,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   selector: 'g[appPlacesLayer]',
   standalone: true,
   imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './places-layer.component.html',
   styleUrl: './places-layer.component.scss'
 })

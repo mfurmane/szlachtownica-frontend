@@ -1,4 +1,4 @@
-import { Component, computed, input, InputSignal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal } from '@angular/core';
 import { MapSelection } from '../../services/map-selection.service';
 import { Characteristic, Place } from '../../shared/map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
@@ -10,6 +10,7 @@ import _ from 'lodash';
   selector: 'app-map-tooltip',
   standalone: true,
   imports: [DecimalPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './map-tooltip.component.html',
   styleUrl: './map-tooltip.component.scss'
 })

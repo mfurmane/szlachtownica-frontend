@@ -1,10 +1,11 @@
-import { Component, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
 import { MapSelectionService, MapSelection } from '../../../services/map-selection.service';
 
 @Component({
   selector: 'g[appPointSelectedLayer]',
   standalone: true,
   imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './point-selected-layer.component.html',
   styleUrl: './point-selected-layer.component.scss'
 })

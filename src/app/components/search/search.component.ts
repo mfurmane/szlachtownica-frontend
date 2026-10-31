@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { ResultType, SearchResult } from '../../shared/search';
@@ -12,6 +12,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   selector: 'app-search',
   standalone: true,
   imports: [AsyncPipe, ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss'
 })

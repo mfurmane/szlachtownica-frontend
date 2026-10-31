@@ -1,5 +1,5 @@
-import { Component, DestroyRef, inject, OnInit, Signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { allRegions, Characteristic, Province, Region } from '../../shared/map';
 import { ColoringService } from '../../services/coloring.service';
 import { LegendCategory, LegendRow, LEGENDS } from '../../shared/legend';
@@ -10,42 +10,29 @@ import { Palette } from '../../shared/coloring';
   selector: 'app-legend',
   standalone: true,
   imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './legend.component.html',
   styleUrl: './legend.component.scss'
 })
-export class LegendComponent implements OnInit {
+export class LegendComponent {
 
   private readonly coloringService: ColoringService = inject(ColoringService);
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
-  private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
-  currentColoring: Characteristic = Characteristic.REGION_TYPE;
-  highlighted?: LegendRow;
-  regionCounts: Map<LegendRow, number> = new Map<LegendRow, number>();
+  readonly palette: Signal<Palette> = this.coloringService.palette;
+  readonly currentColoring: Signal<Characteristic> = this.coloringService.currentColoring;
+  readonly highlightedCategory: Signal<LegendRow | undefined> = this.coloringService.highlightedCategory;
+  private readonly provinces: Signal<Array<Province>> = toSignal(this.worldStateService.provinces$, {initialValue: []});
+  readonly legend: Signal<LegendCategory> = computed((): LegendCategory => LEGENDS[this.currentColoring()]);
+  readonly regionCounts: Signal<Map<LegendRow, number>> = computed((): Map<LegendRow, number> => {
+    const regions: Array<Region> = allRegions(this.provinces());
+    return this.countRegions(regions);
+  });
+
   collapsed: boolean = false;
-
-  palette: Signal<Palette> = this.coloringService.palette;
-
-  ngOnInit(): void {
-    this.coloringService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((currentColoring: Characteristic) => {
-      this.currentColoring = currentColoring;
-    });
-    this.coloringService.highlightedCategory$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((highlighted: LegendRow | undefined) => {
-      this.highlighted = highlighted;
-    });
-    this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((provinces: Array<Province>) => {
-        const regions: Array<Region> = allRegions(provinces);
-        this.regionCounts = this.countRegions(regions);
-      });
-  }
 
   toggleCollapse(): void {
     this.collapsed = !this.collapsed;
-  }
-
-  getLegend(): LegendCategory {
-    return LEGENDS[this.currentColoring];
   }
 
   highlightCategory(row: LegendRow): void {

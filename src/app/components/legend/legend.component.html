@@ -2,14 +2,12 @@
 
 @if (!collapsed) {
   <div class="legend">
-    @for (row of getLegend().rows; track row.value) {
-        <button class="legend-row" [class.active]="row === highlighted" (click)="highlightCategory(row)"
-          [attr.title]="row === highlighted ? 'Kliknij ponownie, aby wyłączyć' : undefined">
-            <span class="swatch" [style.background-color]="palette()[currentColoring][row.value]"></span>
+    @for (row of legend().rows; track row.value) {
+        <button class="legend-row" [class.active]="row === highlightedCategory()" (click)="highlightCategory(row)"
+          [attr.title]="row === highlightedCategory() ? 'Kliknij ponownie, aby wyłączyć' : undefined">
+            <span class="swatch" [style.background-color]="palette()[currentColoring()][row.value]"></span>
             {{ row.label }}
-            @if (regionCounts.has(row)) {
-              ({{ regionCounts.get(row) }})
-            }
+            ({{ regionCounts().get(row) }})
         </button>
     }
   </div>

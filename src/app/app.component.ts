@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { WorldComponent } from './components/world/world.component';
 import { SidePanelComponent } from './components/side-panel/side-panel.component';
 import { KeyboardService } from './services/keyboard.service';
@@ -7,6 +7,7 @@ import { KeyboardService } from './services/keyboard.service';
   selector: 'app-root',
   standalone: true,
   imports: [WorldComponent, SidePanelComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

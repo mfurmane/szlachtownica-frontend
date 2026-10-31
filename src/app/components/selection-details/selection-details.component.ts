@@ -1,4 +1,4 @@
-import { Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
 import { Characteristic, Place } from '../../shared/map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
 import { DecimalPipe } from '@angular/common';
@@ -10,6 +10,7 @@ import _ from 'lodash';
   selector: 'app-selection-details',
   standalone: true,
   imports: [DecimalPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './selection-details.component.html',
   styleUrl: './selection-details.component.scss'
 })

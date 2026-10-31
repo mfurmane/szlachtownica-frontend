@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { WorldStateService } from '../../../services/world-state.service';
 import { allRegions, Province, Region, toPath } from '../../../shared/map';
 import { MapSelectionService } from '../../../services/map-selection.service';
@@ -9,6 +9,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   selector: 'g[appRegionsLayer]',
   standalone: true,
   imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './regions-layer.component.html',
   styleUrl: './regions-layer.component.scss'
 })

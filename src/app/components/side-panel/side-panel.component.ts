@@ -1,4 +1,4 @@
-import { Component, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import { SelectionDetailsComponent } from '../selection-details/selection-details.component';
 import { CharacteristicSelection } from '../../shared/legend';
@@ -19,6 +19,7 @@ enum SideView {
   selector: 'app-side-panel',
   standalone: true,
   imports: [SelectionDetailsComponent, SearchComponent, RegionFilterComponent, ColoringSettingsComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './side-panel.component.html',
   styleUrl: './side-panel.component.scss'
 })

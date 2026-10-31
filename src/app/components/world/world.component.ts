@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, DestroyRef, ElementRef, OnInit, Signal, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Signal, WritableSignal, inject, signal, viewChild } from '@angular/core';
 import { Characteristic, Province } from '../../shared/map';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
 import { ColoringService } from '../../services/coloring.service';
@@ -29,10 +29,11 @@ interface ViewBox {
   standalone: true,
   imports: [LegendComponent, ColoringModesComponent, MapTooltipComponent, AsyncPipe, PointSearchLayerComponent,
     PointSelectedLayerComponent, PolygonSearchLayerComponent, PolygonSelectedLayerComponent, RegionsLayerComponent, PlacesLayerComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './world.component.html',
   styleUrl: './world.component.scss'
 })
-export class WorldComponent implements OnInit {
+export class WorldComponent {
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
   private readonly coloringService: ColoringService = inject(ColoringService);
@@ -56,8 +57,9 @@ export class WorldComponent implements OnInit {
   readonly mapSvg: Signal<ElementRef<SVGSVGElement>> = viewChild.required<ElementRef<SVGSVGElement>>('map');
   readonly mapG: Signal<ElementRef<SVGGElement>> = viewChild.required<ElementRef<SVGGElement>>('mapG');
 
-  viewBox: ViewBox = { x: 0, y: 0, w: 100, h: 100 };
-  currentColoring: Characteristic = Characteristic.REGION_TYPE;
+  readonly viewBox: WritableSignal<ViewBox> = signal<ViewBox>({ x: 0, y: 0, w: 100, h: 100 });
+
+  readonly currentColoring: Signal<Characteristic> = this.coloringService.currentColoring;
   cursorX: number = 0;
   cursorY: number = 0;
 
@@ -66,19 +68,14 @@ export class WorldComponent implements OnInit {
   private panOffsetX: number = 0;
   private panOffsetY: number = 0;
 
-  get panTransform(): string {
-    return `translate(${this.panOffsetX}px, ${this.panOffsetY}px)`;
+  constructor() {
+    this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((provinces: Array<Province>) => {
+      this.viewBox.set(this.computeViewBox(provinces));
+    });
   }
 
-  ngOnInit(): void {
-    this.worldStateService.provinces$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data: Array<Province>) => {
-        this.viewBox = this.computeViewBox(data);
-      });
-    this.coloringService.currentColoring$.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((currentColoring: Characteristic) => {
-        this.currentColoring = currentColoring;
-      });
+  get panTransform(): string {
+    return `translate(${this.panOffsetX}px, ${this.panOffsetY}px)`;
   }
 
   onMouseMove(e: MouseEvent): void {
@@ -101,10 +98,9 @@ export class WorldComponent implements OnInit {
     }
 
     // ten punkt ma zostać pod kursorem po zmianie skali
-    this.viewBox.x = p.x - (p.x - this.viewBox.x) * scale;
-    this.viewBox.y = p.y - (p.y - this.viewBox.y) * scale;
-    this.viewBox.w *= scale;
-    this.viewBox.h *= scale;
+    this.viewBox.update((viewBox: ViewBox): ViewBox => (
+      { x: p.x - (p.x - viewBox.x) * scale, y: p.y - (p.y - viewBox.y) * scale, w: viewBox.w * scale, h: viewBox.h * scale }
+    ));
   }
 
   startPan(e: MouseEvent): void {
@@ -185,8 +181,9 @@ export class WorldComponent implements OnInit {
     const ctm: DOMMatrix | null = this.mapSvg().nativeElement.getScreenCTM();
     if (!_.isNil(ctm)) {
       // ctm to liczba pikseli ekranu na jednostkę mapy
-      this.viewBox.x -= this.panOffsetX / ctm.a;
-      this.viewBox.y -= this.panOffsetY / ctm.d;
+      this.viewBox.update((viewBox: ViewBox): ViewBox => (
+        { x: viewBox.x - this.panOffsetX / ctm.a, y: viewBox.y - this.panOffsetY / ctm.d, w: viewBox.w, h: viewBox.h }
+      ));
     }
     this.panOffsetX = 0;
     this.panOffsetY = 0;

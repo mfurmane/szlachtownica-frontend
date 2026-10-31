@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { MapSelectionService, MapSelection } from '../../../services/map-selection.service';
 import { toPath } from '../../../shared/map';
 import _ from 'lodash';
@@ -7,6 +7,7 @@ import _ from 'lodash';
   selector: 'g[appPolygonSelectedLayer]',
   standalone: true,
   imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './polygon-selected-layer.component.html',
   styleUrl: './polygon-selected-layer.component.scss'
 })
