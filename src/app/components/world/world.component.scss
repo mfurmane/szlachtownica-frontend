@@ -55,3 +55,28 @@ svg:active {
   position: absolute;
   pointer-events: none;
 }
+
+// Rozciąga się na cały komponent (:host ma position: relative) i stawia tekst na środku,
+// z dala od przycisków w lewym górnym rogu i legendy w lewym dolnym.
+.map-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// z-index ma samo pudełko, a nie .map-status: przezroczysta warstwa przykrywa cały komponent,
+// więc nad legendą zabierałaby kliknięcia przyciskom trybów i legendzie.
+.map-status p {
+  position: relative;
+  z-index: 2;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.map-status.error p {
+  color: var(--accent);
+}

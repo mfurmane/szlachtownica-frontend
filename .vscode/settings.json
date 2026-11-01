@@ -1,0 +1,16 @@
+{
+  // Pomijane w wyszukiwaniu, ale widoczne w eksploratorze:
+  // dane świata (wielki JSON w jednej linijce) i plik blokady wersji paczek
+  "search.exclude": {
+    "src/assets/world/**": true,
+    "package-lock.json": true
+  },
+  // Ukryte w eksploratorze (a przez to także w wyszukiwaniu i szybkim otwieraniu):
+  // paczki, pamięć podręczna Angulara, wynik budowania i pliki IntelliJ
+  "files.exclude": {
+    "node_modules": true,
+    ".angular": true,
+    "dist": true,
+    ".idea": true
+  }
+}

@@ -54,18 +54,33 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "online": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.online.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "host": "0.0.0.0"
+          },
           "configurations": {
             "production": {
               "buildTarget": "szlachtownica-frontend:build:production"
             },
             "development": {
               "buildTarget": "szlachtownica-frontend:build:development"
+            },
+            "online": {
+              "buildTarget": "szlachtownica-frontend:build:development,online",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

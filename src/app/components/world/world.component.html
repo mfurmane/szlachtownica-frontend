@@ -27,6 +27,15 @@
   </svg>
 </div>
 
+@switch (loadState().status) {
+  @case (MapStatus.WAITING) {
+    <div class="map-status"><p>Wczytywanie mapy…</p></div>
+  }
+  @case (MapStatus.ERROR) {
+    <div class="map-status error"><p>{{ loadState().message }}</p></div>
+  }
+}
+
 <div class="legend-overlay">
   <app-legend></app-legend>
 </div>
