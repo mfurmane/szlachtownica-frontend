@@ -1,51 +1,28 @@
-import { ChangeDetectionStrategy, Component, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, Signal } from '@angular/core';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
-import { SelectionDetailsComponent } from '../selection-details/selection-details.component';
-import { CharacteristicSelection } from '../../shared/legend';
-import { ColoringService } from '../../services/coloring.service';
-import { SearchComponent } from '../search/search.component';
-import { RegionFilterComponent } from '../../components/forms/region-filter/region-filter.component';
-import { ColoringSettingsComponent } from '../forms/coloring-settings/coloring-settings.component';
 import _ from 'lodash';
-
-enum SideView {
-  SEARCH='SEARCH',
-  FILTER='FILTER',
-  DETAILS='DETAILS',
-  SETTINGS='SETTINGS'
-}
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-side-panel',
   standalone: true,
-  imports: [SelectionDetailsComponent, SearchComponent, RegionFilterComponent, ColoringSettingsComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './side-panel.component.html',
   styleUrl: './side-panel.component.scss'
 })
 export class SidePanelComponent {
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
-  private readonly coloringService: ColoringService = inject(ColoringService);
+  private readonly router: Router = inject(Router);
 
-  readonly selection: Signal<MapSelection | undefined> = this.selectionService.selection;
-
-  readonly SideView: typeof SideView = SideView;
-  readonly selectedView: WritableSignal<SideView> = signal<SideView>(SideView.DETAILS);
+  private readonly selection: Signal<MapSelection | undefined> = this.selectionService.selection;
 
   constructor() {
     effect(() => {
       const selection: MapSelection | undefined = this.selection();
       if (!_.isNil(selection)) {
-        this.selectedView.set(SideView.DETAILS);
+        this.router.navigate(['/details']);
       }
-    }, { allowSignalWrites: true });
-  }
-
-  onCharacteristicSelected(selection: CharacteristicSelection): void {
-    this.coloringService.showCategory(selection.characteristic, selection.row);
-  }
-
-  clearSelection(): void {
-    this.selectionService.clearSelection();
+    });
   }
 }

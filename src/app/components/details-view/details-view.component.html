@@ -1,0 +1,10 @@
+<section class="selection">
+  <h2>Wybrany element</h2>
+  @if (selection(); as selection) {
+    <app-selection-details [selection]="selection" (characteristicSelected)="onCharacteristicSelected($event)" />
+    <button (click)="clearSelection()">Wyczyść zaznaczenie</button>
+  }
+  @else {
+    <h3>Wybierz element</h3>
+  }
+</section>

@@ -1,31 +1,8 @@
 <nav class="tabs">
-  <button [class.active]="selectedView() === SideView.SEARCH" (click)="selectedView.set(SideView.SEARCH)">Wyszukiwarka</button>
-  <button [class.active]="selectedView() === SideView.FILTER" (click)="selectedView.set(SideView.FILTER)">Filtrowanie</button>
-  <button [class.active]="selectedView() === SideView.DETAILS" (click)="selectedView.set(SideView.DETAILS)">Podgląd</button>
-  <button [class.active]="selectedView() === SideView.SETTINGS" (click)="selectedView.set(SideView.SETTINGS)">Ustawienia</button>
+  <button routerLink="/search" routerLinkActive="active">Wyszukiwarka</button>
+  <button routerLink="/region-filters" routerLinkActive="active">Filtrowanie</button>
+  <button routerLink="/details" routerLinkActive="active">Podgląd</button>
+  <button routerLink="/settings" routerLinkActive="active">Ustawienia</button>
 </nav>
-@switch (selectedView()) {
-  @case (SideView.SEARCH) {
-    <app-search></app-search>
-  }
-  @case (SideView.FILTER) {
-    <app-region-filter></app-region-filter>
-  }
-  @case (SideView.SETTINGS) {
-    <app-coloring-settings></app-coloring-settings>
-  }
-  @case (SideView.DETAILS) {
-    <section class="selection">
-      <h2>Wybrany element</h2>
-      @if (selection(); as selection) {
-        <app-selection-details [selection]="selection" (characteristicSelected)="onCharacteristicSelected($event)"/>
-        <button (click)="clearSelection()">Wyczyść zaznaczenie</button>
-      }
-      @else {
-        <h3>Wybierz element</h3>
-      }
-    </section>
-  }
-}
 
-
+<router-outlet></router-outlet>

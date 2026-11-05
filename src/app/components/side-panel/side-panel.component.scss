@@ -5,12 +5,6 @@
   padding: 16px;
 }
 
-.selection {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 // Zakładki zostają na górze, kiedy panel przewija się pod nimi (ustawienia kolorów są długie)
 .tabs {
   position: sticky;
@@ -45,4 +39,8 @@
 .tabs button.active {
   border-bottom-color: var(--accent);
   color: var(--accent);
+}
+
+router-outlet {
+  display: none;
 }
