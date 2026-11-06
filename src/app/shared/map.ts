@@ -52,6 +52,11 @@ export interface ExtendedPlace {
   province: Province;
 }
 
+export interface ExtendedRegion {
+  region: Region;
+  province: Province;
+}
+
 export function toPath(geometry: Polygon): string {
   return geometry.coordinates
     .map((ring: Array<Array<number>>) =>
@@ -76,6 +81,13 @@ export function allPlaces(provinces: Array<Province>): Array<ExtendedPlace> {
           .map((place: Place) => ({ place, region, province })))));
 }
 
+export function allExtendedRegions(provinces: Array<Province>): Array<ExtendedRegion> {
+  return provinces
+    .flatMap((province: Province) => province.subProvinces
+      .flatMap((subprovince: SubProvince) => subprovince.regions
+        .map((region: Region) => ({ region, province }))));
+}
+
 export enum PlaceType {
   SETTLEMENT = 'SETTLEMENT',         // zwykła osada, point + range or area
 
@@ -93,25 +105,25 @@ export enum PlaceType {
 }
 
 export enum PlaceCharacteristic {
-    CAPITAL = 'CAPITAL',
-    LOCAL_CAPITAL = 'LOCAL_CAPITAL',
+  CAPITAL = 'CAPITAL',
+  LOCAL_CAPITAL = 'LOCAL_CAPITAL',
 
-    HUNTING = 'HUNTING',
-    LUMBERING = 'LUMBERING',
-    PLANTING = 'PLANTING',
-    FARMING = 'FARMING',
-    FISHING = 'FISHING',
-    FORTIFIED = 'FORTIFIED',
-    MILITARY = 'MILITARY',
-    TRADING = 'TRADING',
-    ARTISAN = 'ARTISAN',
-    MINING = 'MINING',
-    RESORT = 'RESORT',
-    ENCHANTED = 'ENCHANTED',
-    SEA_PORT = 'SEA_PORT',
-    RIVER_PORT = 'RIVER_PORT',
+  HUNTING = 'HUNTING',
+  LUMBERING = 'LUMBERING',
+  PLANTING = 'PLANTING',
+  FARMING = 'FARMING',
+  FISHING = 'FISHING',
+  FORTIFIED = 'FORTIFIED',
+  MILITARY = 'MILITARY',
+  TRADING = 'TRADING',
+  ARTISAN = 'ARTISAN',
+  MINING = 'MINING',
+  RESORT = 'RESORT',
+  ENCHANTED = 'ENCHANTED',
+  SEA_PORT = 'SEA_PORT',
+  RIVER_PORT = 'RIVER_PORT',
 
-    WILDERNESS_ENCHANT = 'WILDERNESS_ENCHANT'
+  WILDERNESS_ENCHANT = 'WILDERNESS_ENCHANT'
 }
 
 export enum Characteristic {

@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, effect, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
-import _ from 'lodash';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-side-panel',
@@ -13,16 +12,9 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 })
 export class SidePanelComponent {
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
-  private readonly router: Router = inject(Router);
 
-  private readonly selection: Signal<MapSelection | undefined> = this.selectionService.selection;
-
-  constructor() {
-    effect(() => {
-      const selection: MapSelection | undefined = this.selection();
-      if (!_.isNil(selection)) {
-        this.router.navigate(['/details']);
-      }
-    });
-  }
+  readonly detailsPath: Signal<Array<string | number>> = computed((): Array<string | number> => {
+    const selection: MapSelection | undefined = this.selectionService.selection();
+    return this.selectionService.pathToSelection(selection);
+  });
 }

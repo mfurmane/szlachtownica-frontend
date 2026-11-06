@@ -3,6 +3,8 @@ import { DetailsViewComponent } from './components/details-view/details-view.com
 
 export const routes: Routes = [
   { path: '', redirectTo: 'details', pathMatch: 'full' },
+  { path: 'details/region/:regionId', component: DetailsViewComponent },
+  { path: 'details/place/:placeId', component: DetailsViewComponent },
   { path: 'details', component: DetailsViewComponent },
   {
     path: 'search', loadComponent: () => import('./components/search/search.component')

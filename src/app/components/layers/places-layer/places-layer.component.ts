@@ -20,7 +20,7 @@ export class PlacesLayerComponent {
   readonly places: Signal<Array<ExtendedPlace>> = computed(() => allPlaces(this.provinces()));
 
   onPlaceClick(extendedPlace: ExtendedPlace): void {
-    this.selectionService.setSelection(extendedPlace);
+    this.selectionService.routeToSelection(extendedPlace);
   }
 
   onPlaceEnter(extendedPlace: ExtendedPlace): void {

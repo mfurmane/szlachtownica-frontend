@@ -32,7 +32,7 @@ export class SearchComponent {
   }
 
   showPlace(extendedPlace: ExtendedPlace): void {
-    this.selectionService.setSelection(extendedPlace);
+    this.selectionService.routeToSelection(extendedPlace);
   }
 
 }

@@ -28,7 +28,7 @@ export class RegionsLayerComponent {
   readonly colorFunction: Signal<(region: Region) => string> = this.coloringService.colorFunction;
 
   onRegionClick(region: Region, province: Province): void {
-    this.selectionService.setSelection({ region, province });
+    this.selectionService.routeToSelection({ region, province });
   }
 
   onRegionEnter(region: Region, province: Province): void {
