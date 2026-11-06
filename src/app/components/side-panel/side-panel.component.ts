@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
-import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
+import { MapSelectionService } from '../../services/map-selection.service';
+import { MapSelection } from '../../shared/map';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({

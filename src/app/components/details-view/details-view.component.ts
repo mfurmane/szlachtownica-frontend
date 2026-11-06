@@ -1,13 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, InputSignal, Signal } from '@angular/core';
 import { ColoringService } from '../../services/coloring.service';
-import { MapSelectionService, MapSelection } from '../../services/map-selection.service';
+import { MapSelectionService } from '../../services/map-selection.service';
 import { CharacteristicSelection } from '../../shared/legend';
 import { SelectionDetailsComponent } from '../selection-details/selection-details.component';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { map, Observable, switchMap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { WorldStateService } from '../../services/world-state.service';
-import { allExtendedRegions, allPlaces, ExtendedPlace, ExtendedRegion, Province } from '../../shared/map';
+import { findMapSelection, MapSelection, Province } from '../../shared/map';
 
 @Component({
   selector: 'app-details-view',
@@ -21,21 +19,25 @@ export class DetailsViewComponent {
   private readonly selectionService: MapSelectionService = inject(MapSelectionService);
   private readonly coloringService: ColoringService = inject(ColoringService);
   private readonly worldStateService: WorldStateService = inject(WorldStateService);
-  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+
+  readonly regionId: InputSignal<string | undefined> = input<string>();
+  readonly placeId: InputSignal<string | undefined> = input<string>();
+
+  private readonly provinces: Signal<Array<Province>> = toSignal(this.worldStateService.provinces$, { initialValue: [] });
 
   readonly selection: Signal<MapSelection | undefined> = this.selectionService.selection;
+  private readonly selectedValue: Signal<MapSelection | undefined> = computed((): MapSelection | undefined => {
+    const provincesValue: Array<Province> = this.provinces();
+    const regionIdValue: string | undefined = this.regionId();
+    const placeIdValue: string | undefined = this.placeId();
+    return findMapSelection(provincesValue, regionIdValue, placeIdValue);
+  });
 
   constructor() {
-    this.route.paramMap.pipe(
-      switchMap((params: ParamMap): Observable<MapSelection | undefined> => {
-        return this.worldStateService.provinces$.pipe(
-          map((provinces: Array<Province>): MapSelection | undefined => this.findMapSelection(provinces, params))
-        );
-      }),
-      takeUntilDestroyed()
-    ).subscribe((selection: MapSelection | undefined) => {
-      this.selectionService.setSelection(selection);
-    });
+    effect(() => {
+      const selectedValue: MapSelection | undefined = this.selectedValue();
+      this.selectionService.setSelection(selectedValue);
+    }, { allowSignalWrites: true });
   }
 
   onCharacteristicSelected(selection: CharacteristicSelection): void {
@@ -44,18 +46,6 @@ export class DetailsViewComponent {
 
   clearSelection(): void {
     this.selectionService.clearSelection();
-  }
-
-  private findMapSelection(provinces: Array<Province>, params: ParamMap): MapSelection | undefined {
-    if (params.has('regionId')) {
-      const regionId: number = Number(params.get('regionId'));
-      return allExtendedRegions(provinces).find((region: ExtendedRegion) => region.region.id === regionId);
-    } else if (params.has('placeId')) {
-      const placeId: number = Number(params.get('placeId'));
-      return allPlaces(provinces).find((place: ExtendedPlace) => place.place.id === placeId);
-    } else {
-      return undefined;
-    }
   }
 
 }

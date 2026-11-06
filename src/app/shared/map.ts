@@ -1,4 +1,5 @@
 import type { Point, Polygon } from 'geojson';
+import _ from 'lodash';
 
 export interface Province {
   id: number;
@@ -57,6 +58,12 @@ export interface ExtendedRegion {
   province: Province;
 }
 
+export interface MapSelection {
+  region: Region;
+  province: Province;
+  place?: Place;
+}
+
 export function toPath(geometry: Polygon): string {
   return geometry.coordinates
     .map((ring: Array<Array<number>>) =>
@@ -86,6 +93,18 @@ export function allExtendedRegions(provinces: Array<Province>): Array<ExtendedRe
     .flatMap((province: Province) => province.subProvinces
       .flatMap((subprovince: SubProvince) => subprovince.regions
         .map((region: Region) => ({ region, province }))));
+}
+
+export function findMapSelection(provinces: Array<Province>, regionIdValue: string | undefined, placeIdValue: string | undefined): MapSelection | undefined {
+  if (!_.isNil(regionIdValue)) {
+    const regionId: number = Number(regionIdValue);
+    return allExtendedRegions(provinces).find((region: ExtendedRegion) => region.region.id === regionId);
+  } else if (!_.isNil(placeIdValue)) {
+    const placeId: number = Number(placeIdValue);
+    return allPlaces(provinces).find((place: ExtendedPlace) => place.place.id === placeId);
+  } else {
+    return undefined;
+  }
 }
 
 export enum PlaceType {

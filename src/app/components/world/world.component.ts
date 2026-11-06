@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, Signal, WritableSignal, inject, signal, viewChild } from '@angular/core';
-import { Characteristic, Province } from '../../shared/map';
-import { MapSelection, MapSelectionService } from '../../services/map-selection.service';
+import { Characteristic, MapSelection, Province } from '../../shared/map';
+import { MapSelectionService } from '../../services/map-selection.service';
 import { ColoringService } from '../../services/coloring.service';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MapLoadState, MapStatus, WorldStateService } from '../../services/world-state.service';

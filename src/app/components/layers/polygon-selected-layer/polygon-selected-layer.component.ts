@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
-import { MapSelectionService, MapSelection } from '../../../services/map-selection.service';
-import { toPath } from '../../../shared/map';
+import { MapSelectionService } from '../../../services/map-selection.service';
+import { MapSelection, toPath } from '../../../shared/map';
 import _ from 'lodash';
 
 @Component({

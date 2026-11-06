@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
 import { DetailsViewComponent } from './components/details-view/details-view.component';
+import { elementExistsGuard } from './guards/element-exists.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'details', pathMatch: 'full' },
-  { path: 'details/region/:regionId', component: DetailsViewComponent },
-  { path: 'details/place/:placeId', component: DetailsViewComponent },
+  { path: 'details/region/:regionId', component: DetailsViewComponent, canActivate: [elementExistsGuard] },
+  { path: 'details/place/:placeId', component: DetailsViewComponent, canActivate: [elementExistsGuard] },
   { path: 'details', component: DetailsViewComponent },
   {
     path: 'search', loadComponent: () => import('./components/search/search.component')

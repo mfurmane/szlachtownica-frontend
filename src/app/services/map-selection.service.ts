@@ -1,13 +1,7 @@
 import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { Place, Province, Region } from '../shared/map';
+import { MapSelection } from '../shared/map';
 import { Router } from '@angular/router';
 import _ from 'lodash';
-
-export interface MapSelection {
-  region: Region;
-  province: Province;
-  place?: Place;
-}
 
 @Injectable({
   providedIn: 'root'

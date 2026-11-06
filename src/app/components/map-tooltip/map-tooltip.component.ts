@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal } from '@angular/core';
-import { MapSelection } from '../../services/map-selection.service';
-import { Characteristic, Place } from '../../shared/map';
+import { Characteristic, MapSelection, Place } from '../../shared/map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
 import { DecimalPipe } from '@angular/common';
 import { getPlaceCharacteristicLabels, getTypeLabel } from '../../shared/places-data';

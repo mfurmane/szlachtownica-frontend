@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
-import { MapSelectionService, MapSelection } from '../../../services/map-selection.service';
+import { MapSelectionService } from '../../../services/map-selection.service';
+import { MapSelection } from '../../../shared/map';
 
 @Component({
   selector: 'g[appPointSelectedLayer]',
