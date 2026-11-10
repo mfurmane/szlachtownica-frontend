@@ -2,7 +2,7 @@
   <article class="card">
     <header>
       <h3>{{ place.name }}</h3>
-      <span class="subtitle">{{ getTypeLabel(place) }} · {{ selection().province.name }}</span>
+      <span class="subtitle">{{ place | placeTypeLabel }} · {{ selection().province.name }}</span>
     </header>
     <dl class="details">
       <dt>Region</dt><dd>{{ selection().region.id }}</dd>

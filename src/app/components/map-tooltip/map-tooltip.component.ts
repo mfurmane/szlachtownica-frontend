@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signa
 import { Characteristic, MapSelection, Place } from '../../shared/map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
 import { DecimalPipe } from '@angular/common';
-import { getPlaceCharacteristicLabels, getTypeLabel } from '../../shared/places-data';
+import { getPlaceCharacteristicLabels } from '../../shared/places-data';
 import _ from 'lodash';
+import { PlaceTypeLabelPipe } from '../../pipes/place-type-label.pipe';
 
 @Component({
   selector: 'app-map-tooltip',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, PlaceTypeLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './map-tooltip.component.html',
   styleUrl: './map-tooltip.component.scss'
@@ -29,6 +30,5 @@ export class MapTooltipComponent {
 
   readonly characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
   readonly Characteristic: typeof Characteristic = Characteristic;
-  readonly getTypeLabel: (place: Place) => string = getTypeLabel;
 
 }

@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, input, InputSignal, outpu
 import { Characteristic, MapSelection, Place } from '../../shared/map';
 import { CHARACTERISTIC_LABELS, CharacteristicSelection, regionAsCharacteristicSelection } from '../../shared/legend';
 import { DecimalPipe } from '@angular/common';
-import { getPlaceCharacteristicLabels, getTypeLabel } from '../../shared/places-data';
+import { getPlaceCharacteristicLabels } from '../../shared/places-data';
 import _ from 'lodash';
+import { PlaceTypeLabelPipe } from '../../pipes/place-type-label.pipe';
 
 @Component({
   selector: 'app-selection-details',
   standalone: true,
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, PlaceTypeLabelPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './selection-details.component.html',
   styleUrl: './selection-details.component.scss'
@@ -23,7 +24,6 @@ export class SelectionDetailsComponent {
   readonly characteristicSelected: OutputEmitterRef<CharacteristicSelection> = output<CharacteristicSelection>();
 
   readonly characteristicLabels: Record<Characteristic, string> = CHARACTERISTIC_LABELS;
-  readonly getTypeLabel: (place: Place) => string = getTypeLabel;
   readonly placeCharacteristics: Signal<Array<string>> = computed((): Array<string> => {
     const place: Place | undefined = this.selection().place;
     if (!_.isNil(place)) {

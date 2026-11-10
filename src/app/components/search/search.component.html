@@ -5,7 +5,7 @@
       @switch (result.type) {
         @case (ResultType.PLACE) {
           @if (result.extendedPlace; as extendedPlace) {
-            <li><button (click)="showPlace(extendedPlace)">{{extendedPlace.place.name}} ({{getTypeLabel(extendedPlace.place)}})</button></li>
+            <li><button (click)="showPlace(extendedPlace)">{{extendedPlace.place.name}} ({{extendedPlace.place | placeTypeLabel}})</button></li>
           }
         }
         @case (ResultType.PROVINCE) {
