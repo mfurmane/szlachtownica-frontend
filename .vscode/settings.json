@@ -12,5 +12,12 @@
     ".angular": true,
     "dist": true,
     ".idea": true
-  }
+  },
+  // TypeScript z projektu (ten sam, którym buduje Angular) zamiast wbudowanego w VS Code.
+  // Wbudowany bywa nowszy, niż Angular obsługuje: TS 6 nie dołącza sam `@types/jasmine`,
+  // więc w testach podkreślał `describe` / `it` / `expect`, choć `ng test` działał.
+  // VS Code przy pierwszym otwarciu pliku .ts zapyta o przełączenie; trzeba się zgodzić.
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
 }
