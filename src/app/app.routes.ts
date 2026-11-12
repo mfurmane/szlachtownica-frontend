@@ -4,9 +4,11 @@ import { elementExistsGuard } from './guards/element-exists.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'details', pathMatch: 'full' },
-  { path: 'details/region/:regionId', component: DetailsViewComponent, canActivate: [elementExistsGuard] },
-  { path: 'details/place/:placeId', component: DetailsViewComponent, canActivate: [elementExistsGuard] },
-  { path: 'details', component: DetailsViewComponent },
+  { path: 'details', children: [
+    { path: '', component: DetailsViewComponent },
+    { path: 'region/:regionId', component: DetailsViewComponent, canActivate: [elementExistsGuard] },
+    { path: 'place/:placeId', component: DetailsViewComponent, canActivate: [elementExistsGuard] },
+  ] },
   {
     path: 'search', loadComponent: () => import('./components/search/search.component')
       .then((m: typeof import('./components/search/search.component')) => m.SearchComponent)
